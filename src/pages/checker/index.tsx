@@ -1,20 +1,16 @@
 import { useState } from "react";
 import { useZxing } from "react-zxing";
+import { api } from "~/utils/api";
 
 const Index: React.FC = () => {
   const [result, setResult] = useState("");
   const [count, setCount] = useState(0);
   const [paused, setPaused] = useState(false);
 
-  const {
-    ref,
-    torch: {
-      on: torchOn,
-      off: torchOff,
-      // isOn: isTorchOn,
-      // isAvailable: isTorchAvailable,
-    },
-  } = useZxing({
+  const { data: products, isLoading, error } = api.price.getAll.useQuery();
+  const { data: productData } = api.price.getOne.useQuery({ ean: result });
+
+  const { ref } = useZxing({
     paused,
     onDecodeResult(result) {
       setResult(result.getText());
@@ -31,7 +27,7 @@ const Index: React.FC = () => {
 
   return (
     <>
-      <video ref={ref} />
+      <video ref={ref} className="w-80" />
       <p>
         <span>Last result:</span>
         <span>{result}</span>
@@ -42,6 +38,15 @@ const Index: React.FC = () => {
         </button>
         <button onClick={() => setCount(count + 1)}>Count: {count}</button>
       </div>
+      <p>{productData && JSON.stringify(productData)}</p>
+      <button
+        type="button"
+        onClick={() => {
+          setResult("");
+        }}
+      >
+        Reset
+      </button>
     </>
   );
 };

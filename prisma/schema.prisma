@@ -20,6 +20,24 @@ model Example {
     updatedAt DateTime @updatedAt
 }
 
+model Product {
+    id          String   @id @default(cuid())
+    storeId     String
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @default(now()) @updatedAt
+    ean         String   @unique
+    name        String
+    price       Float
+    image       String?
+    retailStore Store    @relation(fields: [storeId], references: [id])
+}
+
+model Store {
+    id       String    @id @default(cuid())
+    location String
+    Product  Product[]
+}
+
 // Necessary for Next auth
 model Account {
     id                String  @id @default(cuid())
