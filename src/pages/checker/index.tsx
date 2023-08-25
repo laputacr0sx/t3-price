@@ -1,3 +1,4 @@
+import React from "react";
 import { useState } from "react";
 import { useZxing } from "react-zxing";
 import { api } from "~/utils/api";
@@ -43,6 +44,7 @@ const Index: React.FC = () => {
         type="button"
         onClick={() => {
           setResult("");
+          setPaused(false);
         }}
       >
         Reset

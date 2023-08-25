@@ -21,21 +21,26 @@ model Example {
 }
 
 model Product {
-    id          String   @id @default(cuid())
-    storeId     String
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @default(now()) @updatedAt
-    ean         String   @unique
-    name        String
-    price       Float
-    image       String?
-    retailStore Store    @relation(fields: [storeId], references: [id])
+    createdAt DateTime @default(now())
+    updatedAt DateTime @default(now()) @updatedAt
+
+    id           String   @id @default(cuid())
+    storeId      String
+    purchaseDate DateTime @default(now())
+    ean          String   @unique
+    name         String
+    price        Float
+    image        String?
+    retailStore  Store    @relation(fields: [storeId], references: [id])
 }
 
 model Store {
-    id       String    @id @default(cuid())
-    location String
-    Product  Product[]
+    id        String    @id @default(cuid())
+    district  String
+    location  String
+    address   String
+    telephone String?
+    Product   Product[]
 }
 
 // Necessary for Next auth
