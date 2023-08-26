@@ -4,7 +4,11 @@ import { type NextPageWithLayout } from "../_app";
 import Layout from "~/layouts/productDetailLayout";
 
 const Index: NextPageWithLayout = () => {
-  return <div>Index</div>;
+  return (
+    <>
+      <div className="">This is showing Product Details</div>
+    </>
+  );
 };
 
 Index.getLayout = function getLayout(page: ReactElement) {

@@ -1,9 +1,11 @@
-import React from "react";
+import React, { type ReactElement } from "react";
 import { useState } from "react";
 import { useZxing } from "react-zxing";
 import { api } from "~/utils/api";
+import { type NextPageWithLayout } from "../_app";
+import Layout from "~/layouts/productDetailLayout";
 
-const Index: React.FC = () => {
+const Index: NextPageWithLayout = () => {
   const [result, setResult] = useState("");
   const [count, setCount] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -27,8 +29,11 @@ const Index: React.FC = () => {
   });
 
   return (
-    <>
-      <video ref={ref} className="w-80" />
+    <div className="flex flex-col">
+      <video
+        ref={ref}
+        className=" h-40 w-max items-center justify-center object-fill align-middle"
+      />
       <p>
         <span>Last result:</span>
         <span>{result}</span>
@@ -49,8 +54,12 @@ const Index: React.FC = () => {
       >
         Reset
       </button>
-    </>
+    </div>
   );
+};
+
+Index.getLayout = function getLayout(page: ReactElement) {
+  return <Layout>{page}</Layout>;
 };
 
 export default Index;
