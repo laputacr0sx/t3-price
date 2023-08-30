@@ -8,9 +8,10 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
   return (
-    <div className="mx-auto flex min-h-screen max-w-2xl flex-col bg-gradient-to-tl from-violet-400 via-amber-100 to-green-400">
+    <div>
       <Navbar />
-      <div className="flex flex-grow">
+      {/* <div className="flex flex-grow"> */}
+      <div className="mx-auto flex min-h-screen max-w-2xl flex-col bg-gradient-to-tl from-violet-400 via-amber-100 to-green-400">
         <main>{children}</main>
       </div>
       <Footer />
