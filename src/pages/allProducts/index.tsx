@@ -13,27 +13,31 @@ const Index: NextPageWithLayout = () => {
   const { data: allProducts, isLoading: isProductLoading } =
     api.demo.getAll.useQuery();
 
+  const priceTag = (price: number): string => {
+    return `$${price}`;
+  };
+
   if (allProducts?.total && !isProductLoading) {
     return allProducts.products.map((product) => (
       <div
         key={product.id}
-        className="flex gap-1 py-2"
+        className="flex w-max py-2"
         onClick={() => {
           console.log(`${product.id} clicked`);
         }}
       >
-        <div className="h-32 w-32 min-w-fit">
+        <div className="flex h-12 w-12 min-w-fit items-center justify-center align-middle">
           <Image
-            src={"https://image.dummyjson.com/128x128"}
+            src="https://image.dummyjson.com/128x128"
             alt="hello"
             loading="lazy"
-            width={128}
-            height={128}
+            width={48}
+            height={48}
           />
         </div>
         <div>
           <h1 className="pb-2 font-bold">{product.title}</h1>
-          <p className="overflow-hidden font-thin">{product.description}</p>
+          <p className="text-right font-thin">{priceTag(product.price)}</p>
         </div>
       </div>
     ));
