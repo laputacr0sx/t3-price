@@ -2,7 +2,7 @@ import axios from "axios";
 
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
-type Product = {
+export type DemoProduct = {
   id: number;
   title: string;
   description: string;
@@ -17,7 +17,7 @@ type Product = {
 };
 
 type ProductResponse = {
-  products: Product[];
+  products: DemoProduct[];
   total: number;
   skip: number;
   limit: number;

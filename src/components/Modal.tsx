@@ -1,14 +1,20 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { type ReactNode } from "react";
 
 type ModalProps = {
-  isModalShown: boolean;
-  setIsModalShown: Dispatch<SetStateAction<boolean>>;
+  isOpen: boolean;
+  onRequestClose: () => void;
+  contentLabel: string;
+  children: ReactNode;
 };
 
-export default function Modal({ isModalShown, setIsModalShown }: ModalProps) {
+export default function Modal({
+  isOpen,
+  onRequestClose,
+  contentLabel,
+}: ModalProps) {
   return (
     <>
-      {isModalShown ? (
+      {isOpen ? (
         <>
           <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden outline-none focus:outline-none">
             <div className="relative mx-auto my-6 w-auto max-w-3xl">
@@ -19,7 +25,7 @@ export default function Modal({ isModalShown, setIsModalShown }: ModalProps) {
                   <h3 className="text-3xl font-semibold">Modal Title</h3>
                   <button
                     className="float-right ml-auto border-0 bg-transparent p-1 text-3xl font-semibold leading-none text-black opacity-5 outline-none focus:outline-none"
-                    onClick={() => setIsModalShown(false)}
+                    // onClick={() => setIsModalShown(false)}
                   >
                     <span className="block h-6 w-6 bg-transparent text-2xl text-black opacity-5 outline-none focus:outline-none">
                       ×
@@ -39,14 +45,14 @@ export default function Modal({ isModalShown, setIsModalShown }: ModalProps) {
                   <button
                     className="background-transparent mb-1 mr-1 px-6 py-2 text-sm font-bold uppercase text-red-500 outline-none transition-all duration-150 ease-linear focus:outline-none"
                     type="button"
-                    onClick={() => setIsModalShown(false)}
+                    // onClick={() => setIsModalShown(false)}
                   >
                     Close
                   </button>
                   <button
                     className="mb-1 mr-1 rounded bg-emerald-500 px-6 py-3 text-sm font-bold uppercase text-white shadow outline-none transition-all duration-150 ease-linear hover:shadow-lg focus:outline-none active:bg-emerald-600"
                     type="button"
-                    onClick={() => setIsModalShown(false)}
+                    // onClick={() => setIsModalShown(false)}
                   >
                     Save Changes
                   </button>
