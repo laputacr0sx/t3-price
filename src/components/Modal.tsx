@@ -31,7 +31,7 @@ export default function Modal({
                 </div>
                 {/*body*/}
                 <div className="relative flex-auto p-6">
-                  <p className="my-4 text-lg leading-relaxed text-slate-500">
+                  <p className="my-4 text-xs leading-relaxed text-slate-500">
                     Lorem ipsum, dolor sit amet consectetur adipisicing elit.
                     Libero dolorum iure quisquam. Esse deleniti doloribus
                     provident consequatur architecto quia accusamus.

@@ -74,7 +74,7 @@ const Index: NextPageWithLayout = () => {
               </span>
             </button>
             <div className="relative flex-auto p-6">
-              <p className="my-4 text-lg leading-relaxed text-slate-500">
+              <p className="my-2 text-xs leading-relaxed text-slate-500">
                 {currentItem?.description}
               </p>
             </div>
@@ -86,12 +86,6 @@ const Index: NextPageWithLayout = () => {
               >
                 Close
               </button>
-              {/* <button
-                className="mb-1 mr-1 rounded bg-emerald-500 px-6 py-3 text-sm font-bold uppercase text-white shadow outline-none transition-all duration-150 ease-linear hover:shadow-lg focus:outline-none active:bg-emerald-600"
-                type="button"
-              >
-                Save Changes
-              </button> */}
             </div>
           </Modal>
         </div>
@@ -101,11 +95,7 @@ const Index: NextPageWithLayout = () => {
 
   if (!!productError) <h1>`Error occurred, please try again later`</h1>;
 
-  return (
-    <>
-      <p className="">loading product page ......</p>
-    </>
-  );
+  return null;
 };
 
 Index.getLayout = function getLayout(page: ReactElement) {
