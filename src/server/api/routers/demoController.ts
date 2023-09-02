@@ -26,16 +26,19 @@ type DemoAllProductResponse = {
 
 export const demoRouter = createTRPCRouter({
   getAll: publicProcedure.query(async () => {
-    const productResponse = await axios.get<DemoAllProductResponse>(
+    const demoAllProductResponse = await axios.get<DemoAllProductResponse>(
       "https://dummyjson.com/products"
     );
 
-    return productResponse.data;
+    return demoAllProductResponse.data;
   }),
 
   getDesired: publicProcedure
     .input(z.object({ id: z.string() }))
-    .query(({ ctx, input }) => {
-      return;
+    .query(async ({ input }) => {
+      const demoProductResponse = await axios.get<DemoProduct>(
+        `http://dummyjson.com/product/${input.id}`
+      );
+      return demoProductResponse.data;
     }),
 });
