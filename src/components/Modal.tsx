@@ -23,10 +23,7 @@ export default function Modal({
                 {/*header*/}
                 <div className="flex items-start justify-between rounded-t border-b border-solid border-slate-200 p-5">
                   <h3 className="text-3xl font-semibold">Modal Title</h3>
-                  <button
-                    className="float-right ml-auto border-0 bg-transparent p-1 text-3xl font-semibold leading-none text-black opacity-5 outline-none focus:outline-none"
-                    // onClick={() => setIsModalShown(false)}
-                  >
+                  <button className="float-right ml-auto border-0 bg-transparent p-1 text-3xl font-semibold leading-none text-black opacity-5 outline-none focus:outline-none">
                     <span className="block h-6 w-6 bg-transparent text-2xl text-black opacity-5 outline-none focus:outline-none">
                       ×
                     </span>
@@ -52,7 +49,6 @@ export default function Modal({
                   <button
                     className="mb-1 mr-1 rounded bg-emerald-500 px-6 py-3 text-sm font-bold uppercase text-white shadow outline-none transition-all duration-150 ease-linear hover:shadow-lg focus:outline-none active:bg-emerald-600"
                     type="button"
-                    // onClick={() => setIsModalShown(false)}
                   >
                     Save Changes
                   </button>

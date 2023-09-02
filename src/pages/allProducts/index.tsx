@@ -43,7 +43,7 @@ const Index: NextPageWithLayout = () => {
                 setIsModalShown(!isModalShown);
               }}
             >
-              <div className="flex h-12 w-12 min-w-fit items-center justify-center align-middle">
+              <div className="flex h-12 w-12  items-center justify-center align-middle">
                 <Image
                   src="https://image.dummyjson.com/128x128"
                   alt="hello"
@@ -53,8 +53,10 @@ const Index: NextPageWithLayout = () => {
                 />
               </div>
               <div>
-                <h1 className="pb-2 text-left font-bold">{product.title}</h1>
-                <p className="text-right font-thin">{`$${product.price}`}</p>
+                <h1 className="pb-2 text-left font-bold text-slate-50">
+                  {product.title}
+                </h1>
+                <p className="text-right font-thin text-slate-200">{`$${product.price}`}</p>
               </div>
             </div>
           ))}
@@ -65,13 +67,32 @@ const Index: NextPageWithLayout = () => {
             isOpen={isModalShown}
             ariaHideApp={false}
           >
-            <button
-              onClick={closeModal}
-              className="bg-amber-400 text-4xl font-bold hover:bg-slate-400 active:bg-slate-50"
-            >
-              Close
+            <h1 className="text-3xl font-semibold">{currentItem?.title}</h1>
+            <button className="float-right ml-auto border-0 bg-transparent p-1 text-3xl font-semibold leading-none text-black opacity-5 outline-none focus:outline-none">
+              <span className="block h-6 w-6 bg-transparent text-2xl text-black opacity-5 outline-none focus:outline-none">
+                ×
+              </span>
             </button>
-            <h1>{currentItem?.title}</h1>
+            <div className="relative flex-auto p-6">
+              <p className="my-4 text-lg leading-relaxed text-slate-500">
+                {currentItem?.description}
+              </p>
+            </div>
+            <div className="flex items-center justify-end rounded-b border-t border-solid border-slate-200 p-6">
+              <button
+                className="background-transparent mb-1 mr-1 px-6 py-2 text-sm font-bold uppercase text-red-500 outline-none transition-all duration-150 ease-linear focus:outline-none"
+                type="button"
+                onClick={closeModal}
+              >
+                Close
+              </button>
+              {/* <button
+                className="mb-1 mr-1 rounded bg-emerald-500 px-6 py-3 text-sm font-bold uppercase text-white shadow outline-none transition-all duration-150 ease-linear hover:shadow-lg focus:outline-none active:bg-emerald-600"
+                type="button"
+              >
+                Save Changes
+              </button> */}
+            </div>
           </Modal>
         </div>
       </>
