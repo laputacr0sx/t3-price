@@ -15,12 +15,19 @@ const Index: NextPageWithLayout = () => {
   // const { data: products, isLoading, error } = api.price.getAll.useQuery();
   // const { data: productData } = api.price.getOne.useQuery({ ean: result });
 
-  const demoEANID = (ean: EAN): string => {
-    const EANID = ean.split("").reduce((prev, curr): number => {
-      return +curr * prev;
-    }, 1);
-    return String(EANID).charAt(0);
-  };
+  const demoEANID = (ean: EAN): string =>
+    ean
+      .split("")
+      .reduce((prev, curr): number => {
+        return +curr * prev;
+      }, 1)
+      .toString()
+      .slice(0, 3)
+      .split("")
+      .reduce((prev, curr): number => {
+        return +curr + prev;
+      }, 3)
+      .toString();
 
   const { data: demoProduct, error: demoProductError } =
     api.demo.getDesired.useQuery({ id: demoEANID(result) });
@@ -44,7 +51,8 @@ const Index: NextPageWithLayout = () => {
     <div className="flex flex-col items-center">
       <video
         ref={ref}
-        className="h-[50vh] w-[50vw] items-center justify-center self-center align-middle"
+        className="h-[50vh] w-[50vw] items-center justify-center self-center p-5 align-middle"
+        placeholder="video here"
       />
       <p>
         <span>Last result:</span>
