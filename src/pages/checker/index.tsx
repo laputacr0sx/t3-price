@@ -9,8 +9,9 @@ type EAN = string;
 
 const Index: NextPageWithLayout = () => {
   const [result, setResult] = useState("");
-  const [count, setCount] = useState(0);
+
   const [paused, setPaused] = useState(false);
+  const [isProductLoading, setIsProductLoading] = useState(false);
 
   // const { data: products, isLoading, error } = api.price.getAll.useQuery();
   // const { data: productData } = api.price.getOne.useQuery({ ean: result });
@@ -26,7 +27,7 @@ const Index: NextPageWithLayout = () => {
       .split("")
       .reduce((prev, curr): number => {
         return +curr + prev;
-      }, 3)
+      }, 0)
       .toString();
 
   const { data: demoProduct, error: demoProductError } =
@@ -47,11 +48,19 @@ const Index: NextPageWithLayout = () => {
     },
   });
 
+  const demoProductResult = demoProduct ? (
+    <p className="text-ellipsis break-all ">
+      {demoProduct && JSON.stringify(demoProduct)}
+    </p>
+  ) : null;
+
+  const spinner = isProductLoading ? <>Loading</> : null;
+
   return (
     <div className="flex flex-col items-center">
       <video
         ref={ref}
-        className="h-[50vh] w-[50vw] items-center justify-center self-center p-5 align-middle"
+        className="items-center justify-center self-center p-5 align-middle"
         placeholder="video here"
       />
       <p>
@@ -63,11 +72,9 @@ const Index: NextPageWithLayout = () => {
         <button onClick={() => setPaused(!paused)}>
           {paused ? "Resume" : "Pause"}
         </button>
-        <button onClick={() => setCount(count + 1)}>Count: {count}</button>
       </div>
-      <p className="text-ellipsis break-all ">
-        {demoProduct && JSON.stringify(demoProduct)}
-      </p>
+      {demoProductResult}
+      {spinner}
       <button
         type="reset"
         onClick={() => {

@@ -1,4 +1,3 @@
-import Head from "next/head";
 import { type NextPageWithLayout } from "./_app";
 import { type ReactElement } from "react";
 import Layout from "~/layouts/productDetailLayout";

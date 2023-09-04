@@ -32,35 +32,33 @@ const Index: NextPageWithLayout = () => {
   if (allProducts?.total && !isProductLoading) {
     return (
       <>
-        <div>
-          {allProducts.products.map((product) => (
-            <div
-              key={product.id}
-              className="flex w-screen items-center justify-between gap-2 px-1 py-2 align-middle"
-              onClick={(e) => {
-                e.preventDefault();
-                product && openModal(product);
-                setIsModalShown(!isModalShown);
-              }}
-            >
-              <div className="flex h-12 w-12  items-center justify-center align-middle">
-                <Image
-                  src="https://image.dummyjson.com/128x128"
-                  alt="hello"
-                  loading="lazy"
-                  width={48}
-                  height={48}
-                />
-              </div>
-              <div>
-                <h1 className="pb-2 text-left font-bold text-slate-50">
-                  {product.title}
-                </h1>
-                <p className="text-right font-thin text-slate-200">{`$${product.price}`}</p>
-              </div>
+        {allProducts.products.map((product) => (
+          <div
+            key={product.id}
+            className="flex w-screen items-center justify-between gap-2 px-1 py-2 align-middle"
+            onClick={(e) => {
+              e.preventDefault();
+              product && openModal(product);
+              setIsModalShown(!isModalShown);
+            }}
+          >
+            <div className="flex h-12 w-12  items-center justify-center align-middle">
+              <Image
+                src="https://image.dummyjson.com/128x128"
+                alt="hello"
+                loading="lazy"
+                width={48}
+                height={48}
+              />
             </div>
-          ))}
-        </div>
+            <div>
+              <h1 className="pb-2 text-left font-bold text-slate-50">
+                {product.title}
+              </h1>
+              <p className="text-right font-thin text-slate-200">{`$${product.price}`}</p>
+            </div>
+          </div>
+        ))}
         <div>
           <Modal
             onRequestClose={closeModal}
