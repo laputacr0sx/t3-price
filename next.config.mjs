@@ -9,7 +9,7 @@ const config = {
   reactStrictMode: true,
 
   images: {
-    domains: ["image.dummyjson.com"],
+    domains: ["image.dummyjson.com", "i.dummyjson.com"],
   },
   /**
    * If you are using `appDir` then you must comment the below `i18n` config out.

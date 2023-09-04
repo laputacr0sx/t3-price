@@ -29,26 +29,35 @@ const Index: NextPageWithLayout = () => {
     setIsModalShown(false);
   };
 
+  const getRandomImage = (images: string[]): string => {
+    const imagesLength = images.length;
+    const randomImagePosition = Math.floor(Math.random() * imagesLength);
+
+    return images.at(randomImagePosition) ?? "";
+  };
+
   if (allProducts?.total && !isProductLoading) {
     return (
       <>
         {allProducts.products.map((product) => (
           <div
             key={product.id}
-            className="flex w-screen items-center justify-between gap-2 px-1 py-2 align-middle"
+            className="flex w-screen items-center justify-between gap-2 px-1 py-2 align-middle "
             onClick={(e) => {
               e.preventDefault();
-              product && openModal(product);
+              {
+                product ? openModal(product) : null;
+              }
               setIsModalShown(!isModalShown);
             }}
           >
-            <div className="flex h-12 w-12  items-center justify-center align-middle">
+            <div className="relative h-12 w-12 items-center justify-center align-middle">
               <Image
-                src="https://image.dummyjson.com/128x128"
+                src={getRandomImage(product.images)}
                 alt="hello"
                 loading="lazy"
-                width={48}
-                height={48}
+                sizes="10vw"
+                fill
               />
             </div>
             <div>
