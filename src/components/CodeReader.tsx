@@ -41,8 +41,9 @@ const Html5QrcodePlugin = (
 ) => {
   useEffect(() => {
     // when component mounts
-    const config = createConfig({ fps: 20 });
+    const config = createConfig(props);
     const verbose = props.verbose === true;
+
     // Suceess callback is required.
     if (!props.qrCodeSuccessCallback) {
       throw "qrCodeSuccessCallback is required callback.";
@@ -65,7 +66,11 @@ const Html5QrcodePlugin = (
     };
   });
 
-  return <div id={qrcodeRegionId} />;
+  return (
+    <>
+      <div id={qrcodeRegionId} />
+    </>
+  );
 };
 
 export default Html5QrcodePlugin;
