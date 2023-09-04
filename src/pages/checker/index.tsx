@@ -4,31 +4,15 @@ import { useZxing } from "react-zxing";
 import { api } from "~/utils/api";
 import { type NextPageWithLayout } from "../_app";
 import Layout from "~/layouts/productDetailLayout";
-
-type EAN = string;
+import { demoEANID } from "~/utils/helper";
 
 const Index: NextPageWithLayout = () => {
   const [result, setResult] = useState("");
-
   const [paused, setPaused] = useState(false);
   const [isProductLoading, setIsProductLoading] = useState(false);
 
   // const { data: products, isLoading, error } = api.price.getAll.useQuery();
   // const { data: productData } = api.price.getOne.useQuery({ ean: result });
-
-  const demoEANID = (ean: EAN): string =>
-    ean
-      .split("")
-      .reduce((prev, curr): number => {
-        return +curr * prev;
-      }, 1)
-      .toString()
-      .slice(0, 3)
-      .split("")
-      .reduce((prev, curr): number => {
-        return +curr + prev;
-      }, 0)
-      .toString();
 
   const { data: demoProduct, error: demoProductError } =
     api.demo.getDesired.useQuery({ id: demoEANID(result) });

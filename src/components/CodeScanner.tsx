@@ -9,7 +9,7 @@ import {
 
 import { useEffect } from "react";
 
-const qrcodeRegionId = "html5qr-code-full-region";
+const scannerRegionId = "html5qr-code-full-region";
 
 // Creates the configuration object for Html5QrcodeScanner.
 function createConfig(props: Html5QrcodeCameraScanConfig) {
@@ -49,10 +49,11 @@ const Html5QrcodePlugin = (
       throw "qrCodeSuccessCallback is required callback.";
     }
     const html5QrcodeScanner = new Html5QrcodeScanner(
-      qrcodeRegionId,
+      scannerRegionId,
       config,
       verbose
     );
+
     html5QrcodeScanner.render(
       props.qrCodeSuccessCallback,
       props.qrCodeErrorCallback
@@ -68,7 +69,8 @@ const Html5QrcodePlugin = (
 
   return (
     <>
-      <div id={qrcodeRegionId} />
+      <h1>Place barcode inside the border</h1>
+      <div id={scannerRegionId} className="h-[20vh] min-h-min w-screen" />
     </>
   );
 };
