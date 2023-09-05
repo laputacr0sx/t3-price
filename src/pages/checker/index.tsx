@@ -33,7 +33,7 @@ const Index: NextPageWithLayout = () => {
   });
 
   const demoProductResult = demoProduct ? (
-    <p className="text-ellipsis break-all ">
+    <p className="text-ellipsis break-all px-4">
       {demoProduct && JSON.stringify(demoProduct)}
     </p>
   ) : null;
@@ -65,7 +65,7 @@ const Index: NextPageWithLayout = () => {
           setResult("");
           setPaused(false);
         }}
-        className="h-fit w-max border-solid border-cyan-200 p-2 "
+        className="h-fit w-max border-solid border-cyan-200 bg-red-700 p-2"
       >
         Reset
       </button>
