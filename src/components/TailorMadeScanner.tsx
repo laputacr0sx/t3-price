@@ -35,11 +35,11 @@ function TailorMadeScanner({}: TailorMadeScannerProp) {
       formatsToSupport: [Html5QrcodeSupportedFormats.EAN_13],
     });
 
-    if (!isScannerPaused) {
+    if (!isScannerPaused)
       myEANScanner
         .start(
           {
-            deviceId: { exact: camera?.id },
+            facingMode: "environment",
           },
           {
             fps: 4, // Optional, frame per seconds for qr code scanning
@@ -48,6 +48,11 @@ function TailorMadeScanner({}: TailorMadeScannerProp) {
           },
           (decodedText, decodedResult) => {
             setScannedEAN(demoEANID(decodedText));
+            myEANScanner
+              .stop()
+              .then()
+              .catch((e) => console.error(e));
+            setIsScannerPaused(true);
           },
           (errorMessage) => {
             throw new Error(errorMessage);
@@ -57,31 +62,30 @@ function TailorMadeScanner({}: TailorMadeScannerProp) {
           console.error(err);
         });
 
-      return () => {
-        if (myEANScanner.isScanning) {
-          myEANScanner.stop().catch(() => {
-            return;
-          });
-        }
-      };
-    } else {
-      myEANScanner.pause();
-    }
-  }, []);
+    return () => {
+      if (myEANScanner.isScanning) {
+        myEANScanner.stop().catch(() => {
+          return;
+        });
+      }
+    };
+  }, [isScannerPaused]);
 
   return (
     <>
       <div className="flex justify-between">
         <h1>This is my scanner</h1>
         <button
+          disabled={!isScannerPaused}
           onClick={() => {
-            setIsScannerPaused(!isScannerPaused);
+            setIsScannerPaused(false);
           }}
         >
-          T
+          Toggle
         </button>
       </div>
       <div id="scanner" className="w-screen lg:w-[40vw]" />
+      <div id="capturedImage" />
 
       {cameraList?.map((camera) => (
         <div className="break-words" key={camera.id}>
