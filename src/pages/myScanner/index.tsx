@@ -1,15 +1,21 @@
-import React from "react";
+import React, { type ReactElement } from "react";
 import TailorMadeScanner from "~/components/TailorMadeScanner";
 import useWindowDimension from "~/hooks/useWindowDimensions";
+import { type NextPageWithLayout } from "../_app";
+import Layout from "~/layouts/productDetailLayout";
 
-function Index() {
+const MyScanner: NextPageWithLayout = () => {
   const { width } = useWindowDimension();
 
   return (
-    <div>
+    <div className="flex-col items-center justify-center">
       <TailorMadeScanner cameraWidth={width} />
     </div>
   );
-}
+};
 
-export default Index;
+MyScanner.getLayout = function getLayout(page: ReactElement) {
+  return <Layout>{page}</Layout>;
+};
+
+export default MyScanner;

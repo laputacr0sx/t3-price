@@ -1,7 +1,7 @@
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
 import { useEffect, useState } from "react";
 import { demoEANID } from "../utils/helper";
-import useWindowDimension from "~/hooks/useWindowDimensions";
+import { Console } from "console";
 
 type TailorMadeScannerProp = {
   cameraWidth: number;
@@ -13,10 +13,6 @@ function TailorMadeScanner({ cameraWidth }: TailorMadeScannerProp) {
   useEffect(() => {
     Html5Qrcode.getCameras()
       .then((devices) => {
-        /**
-         * devices would be an array of objects of type:
-         * { id: "id", label: "label" }
-         */
         if (devices?.length) {
           const cameraId = devices?.[0]?.id;
           if (cameraId) setCameraId(cameraId);
@@ -33,12 +29,19 @@ function TailorMadeScanner({ cameraWidth }: TailorMadeScannerProp) {
 
     myEANScanner
       .start(
-        { facingMode: "environment" },
+        {
+          deviceId: cameraId,
+        },
+        // deviceId: cameraId,
+        // aspectRatio: 2.3335,
+        // width: window.innerWidth * 0.8,
+        // height: innerWidth * 0.2667,
+
         {
           fps: 10, // Optional, frame per seconds for qr code scanning
           qrbox: {
-            width: cameraWidth * 0.8,
-            height: cameraWidth * 0.2667,
+            width: 10,
+            height: 10,
           }, // Optional, if you want bounded box UI
         },
         (decodedText, decodedResult) => {
@@ -48,13 +51,18 @@ function TailorMadeScanner({ cameraWidth }: TailorMadeScannerProp) {
           throw new Error(errorMessage);
         }
       )
-      .catch((err: Error) => {
-        throw new Error(err.message);
+      .catch((err) => {
+        console.error(err);
       });
 
-    return () => {
-      myEANScanner.clear();
-    };
+    // return () => {
+    //   myEANScanner
+    //     .stop()
+    //     .then(() => {
+    //       console.log("hello i am returning");
+    //     })
+    //     .catch((error) => console.error(error));
+    // };
   }, []);
 
   return (
