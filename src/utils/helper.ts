@@ -1,4 +1,4 @@
-import { EAN } from "~/types/allTypes";
+import { type EAN } from "~/types/allTypes";
 
 export const demoEANID = (ean: EAN): string =>
   ean

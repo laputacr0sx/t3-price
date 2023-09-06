@@ -1,4 +1,5 @@
 // file = Html5QrcodePlugin.jsx
+
 import {
   Html5QrcodeScanner,
   type QrcodeErrorCallback,
@@ -47,7 +48,7 @@ const Html5QrcodePlugin = (
     const config = createConfig({
       ...props,
       fps: 2,
-      aspectRatio: 1.3334,
+      aspectRatio: 2.3335,
       qrbox: {
         width: dimension?.width * 0.8,
         height: dimension?.width * 0.2667,
@@ -55,13 +56,12 @@ const Html5QrcodePlugin = (
     });
     const verbose = props.verbose === true;
 
-    console.log(config);
-
     // Suceess callback is required.
     if (!props.qrCodeSuccessCallback) {
       throw "qrCodeSuccessCallback is required callback.";
     }
 
+    // instantiate the Scanner
     const html5QrcodeScanner = new Html5QrcodeScanner(
       scannerRegionId,
       {
@@ -72,6 +72,7 @@ const Html5QrcodePlugin = (
       verbose
     );
 
+    // render the Scanner
     html5QrcodeScanner.render(
       props.qrCodeSuccessCallback,
       props.qrCodeErrorCallback

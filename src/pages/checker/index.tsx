@@ -11,6 +11,7 @@ const Index: NextPageWithLayout = () => {
   const [paused, setPaused] = useState(false);
   const [isProductLoading, setIsProductLoading] = useState(false);
 
+  const utils = api.useContext();
   // const { data: products, isLoading, error } = api.price.getAll.useQuery();
   // const { data: productData } = api.price.getOne.useQuery({ ean: result });
 
