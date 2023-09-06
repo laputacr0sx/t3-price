@@ -1,7 +1,8 @@
 import { type EAN } from "~/types/allTypes";
 
-export const demoEANID = (ean: EAN): string =>
-  ean
+export const demoEANID = (ean: EAN): string => {
+  if (ean.length <= 0) return "0";
+  return ean
     .split("")
     .reduce((prev, curr): number => {
       return parseInt(curr === "0" ? "1" : curr) * prev;
@@ -13,6 +14,9 @@ export const demoEANID = (ean: EAN): string =>
       return parseInt(curr) + prev;
     }, 0)
     .toString();
+};
+
+console.log(demoEANID(""));
 
 export const getRandomImage = (images: string[]): string => {
   const imagesLength = images?.length;

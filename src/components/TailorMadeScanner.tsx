@@ -1,23 +1,17 @@
+import { useEffect, useState } from "react";
 import {
-  CameraDevice,
+  type CameraDevice,
   Html5Qrcode,
   Html5QrcodeSupportedFormats,
 } from "html5-qrcode";
-import { useEffect, useState } from "react";
 import { demoEANID } from "../utils/helper";
+import { type TailorMadeScannerProp } from "~/types/allTypes";
 import { api } from "~/utils/api";
-import ProductModal from "./ProductModal";
 
-type TailorMadeScannerProp = {
-  cameraWidth: number;
-};
-
-function TailorMadeScanner({ cameraWidth }: TailorMadeScannerProp) {
+function TailorMadeScanner({}: TailorMadeScannerProp) {
   const [cameraList, setCameraList] = useState<CameraDevice[] | null>(null);
-  const [camera, setCamera] = useState<CameraDevice | null>(null);
-
+  const [camera, setCamera] = useState<CameraDevice>();
   const [scannedEAN, setScannedEAN] = useState<string | undefined>("");
-  const [isModalShown, setIsModalShown] = useState(false);
 
   const { data: product } = api.demo.getDesired.useQuery({
     id: demoEANID(scannedEAN ?? ""),
@@ -28,6 +22,7 @@ function TailorMadeScanner({ cameraWidth }: TailorMadeScannerProp) {
       .then((devices) => {
         if (devices?.length) {
           setCameraList(devices);
+          setCamera(devices?.[0]);
         }
       })
       .catch((err: Error) => {
@@ -42,27 +37,15 @@ function TailorMadeScanner({ cameraWidth }: TailorMadeScannerProp) {
     myEANScanner
       .start(
         {
-          facingMode: "environment",
-          // aspectRatio: 2.3335,
+          deviceId: { exact: camera?.id },
         },
-        // deviceId: cameraId,
-        // aspectRatio: 2.3335,
-        // width: window.innerWidth * 0.8,
-        // height: innerWidth * 0.2667,
-
         {
-          fps: 10, // Optional, frame per seconds for qr code scanning
-          qrbox: {
-            width: cameraWidth * 0.8,
-            height: cameraWidth * 0.525,
-          }, // Optional, if you want bounded box UI
+          fps: 4, // Optional, frame per seconds for qr code scanning
+          qrbox: { width: 280, height: 170 },
+          aspectRatio: 1.7778,
         },
         (decodedText, decodedResult) => {
           setScannedEAN(demoEANID(decodedText));
-
-          if (isModalShown === false) {
-            setIsModalShown(true);
-          }
         },
         (errorMessage) => {
           throw new Error(errorMessage);
@@ -92,7 +75,12 @@ function TailorMadeScanner({ cameraWidth }: TailorMadeScannerProp) {
           <p className="text-xs font-thin ">{camera.id}</p>
         </div>
       ))}
-      <footer>This is it</footer>
+      {product ? (
+        <div>
+          <h3>{product.title}</h3>
+          <p className="break-words text-xs font-thin">{product.description}</p>
+        </div>
+      ) : null}
     </>
   );
 }
