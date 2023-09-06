@@ -18,7 +18,9 @@ const Index: NextPageWithLayout = () => {
     data: allProducts,
     isLoading: isProductLoading,
     error: productError,
-  } = api.demo.getAll.useQuery(undefined, { refetchOnWindowFocus: false });
+  } = api.demo.getAll.useQuery(undefined, {
+    refetchOnWindowFocus: false,
+  });
 
   const openModal = (productItem: DemoProduct) => {
     setCurrentItem(productItem);
@@ -29,7 +31,7 @@ const Index: NextPageWithLayout = () => {
     const imagesLength = images.length;
     const randomImagePosition = Math.floor(Math.random() * imagesLength);
 
-    return images.at(randomImagePosition) ?? "";
+    return images.at(randomImagePosition)!;
   };
 
   if (allProducts?.total && !isProductLoading) {

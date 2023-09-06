@@ -4,7 +4,7 @@ import { type NextPageWithLayout } from "../_app";
 import Layout from "~/layouts/productDetailLayout";
 
 import Html5QrcodePlugin from "~/components/CodeScanner";
-import ResultComponent from "~/components/ScanResult";
+import ScanResult from "~/components/ScanResult";
 
 const NewChecker: NextPageWithLayout = () => {
   const [scannedResult, setScannedResult] = useState("");
@@ -20,7 +20,7 @@ const NewChecker: NextPageWithLayout = () => {
         qrCodeSuccessCallback={onNewScanResult}
         verbose={false}
       />
-      {scannedResult ? <ResultComponent scanResult={scannedResult} /> : null}
+      {scannedResult ? <ScanResult scanResult={scannedResult} /> : null}
     </div>
   );
 };

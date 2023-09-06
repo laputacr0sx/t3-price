@@ -2,7 +2,7 @@ import { type EAN } from "~/types/allTypes";
 import { api } from "~/utils/api";
 import { demoEANID } from "~/utils/helper";
 
-const ResultComponent = ({ scanResult }: { scanResult: EAN }) => {
+const ScanResult = ({ scanResult }: { scanResult: EAN }) => {
   const { data: demoProduct } = api.demo.getDesired.useQuery({
     id: demoEANID(scanResult),
   });
@@ -21,4 +21,4 @@ const ResultComponent = ({ scanResult }: { scanResult: EAN }) => {
   );
 };
 
-export default ResultComponent;
+export default ScanResult;
