@@ -43,7 +43,7 @@ function TailorMadeScanner({ cameraWidth }: TailorMadeScannerProp) {
       .start(
         {
           facingMode: "environment",
-          aspectRatio: 2.3335,
+          // aspectRatio: 2.3335,
         },
         // deviceId: cameraId,
         // aspectRatio: 2.3335,
@@ -74,12 +74,9 @@ function TailorMadeScanner({ cameraWidth }: TailorMadeScannerProp) {
 
     return () => {
       if (myEANScanner.isScanning) {
-        myEANScanner
-          .stop()
-          .then(() => {
-            myEANScanner.clear();
-          })
-          .catch((error) => console.error(error));
+        myEANScanner.stop().catch(() => {
+          return;
+        });
       }
     };
   }, []);
@@ -87,23 +84,14 @@ function TailorMadeScanner({ cameraWidth }: TailorMadeScannerProp) {
   return (
     <>
       <h1>This is my scanner</h1>
-      <button
-        onClick={() => {
-          return;
-        }}
-        className="border-solid border-blue-200"
-      >
-        Toggle Camera
-      </button>
-      <div id="scanner"></div>
+      <div id="scanner" />
 
-      {product ? (
-        <ProductModal
-          currentItem={product}
-          isModalShown={isModalShown}
-          setIsModalShown={setIsModalShown}
-        />
-      ) : null}
+      {cameraList?.map((camera) => (
+        <div className="break-words" key={camera.id}>
+          <h2>{camera.label}</h2>
+          <p className="text-xs font-thin ">{camera.id}</p>
+        </div>
+      ))}
       <footer>This is it</footer>
     </>
   );
