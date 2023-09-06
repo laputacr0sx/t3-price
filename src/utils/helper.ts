@@ -1,7 +1,6 @@
 import { type EAN } from "~/types/allTypes";
 
 export const demoEANID = (ean: EAN): string => {
-  if (ean.length <= 0) return "0";
   return ean
     .split("")
     .reduce((prev, curr): number => {

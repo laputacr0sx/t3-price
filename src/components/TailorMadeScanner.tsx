@@ -12,6 +12,7 @@ function TailorMadeScanner({}: TailorMadeScannerProp) {
   const [cameraList, setCameraList] = useState<CameraDevice[] | null>(null);
   const [camera, setCamera] = useState<CameraDevice>();
   const [scannedEAN, setScannedEAN] = useState<string | undefined>("");
+  const [isScannerPaused, setIsScannerPaused] = useState(false);
 
   const { data: product } = api.demo.getDesired.useQuery({
     id: demoEANID(scannedEAN ?? ""),
@@ -34,40 +35,53 @@ function TailorMadeScanner({}: TailorMadeScannerProp) {
       formatsToSupport: [Html5QrcodeSupportedFormats.EAN_13],
     });
 
-    myEANScanner
-      .start(
-        {
-          deviceId: { exact: camera?.id },
-        },
-        {
-          fps: 4, // Optional, frame per seconds for qr code scanning
-          qrbox: { width: 280, height: 170 },
-          aspectRatio: 1.7778,
-        },
-        (decodedText, decodedResult) => {
-          setScannedEAN(demoEANID(decodedText));
-        },
-        (errorMessage) => {
-          throw new Error(errorMessage);
-        }
-      )
-      .catch((err) => {
-        console.error(err);
-      });
-
-    return () => {
-      if (myEANScanner.isScanning) {
-        myEANScanner.stop().catch(() => {
-          return;
+    if (!isScannerPaused) {
+      myEANScanner
+        .start(
+          {
+            deviceId: { exact: camera?.id },
+          },
+          {
+            fps: 4, // Optional, frame per seconds for qr code scanning
+            // qrbox: { width: 280, height: 170 },
+            aspectRatio: 1.7778,
+          },
+          (decodedText, decodedResult) => {
+            setScannedEAN(demoEANID(decodedText));
+          },
+          (errorMessage) => {
+            throw new Error(errorMessage);
+          }
+        )
+        .catch((err) => {
+          console.error(err);
         });
-      }
-    };
+
+      return () => {
+        if (myEANScanner.isScanning) {
+          myEANScanner.stop().catch(() => {
+            return;
+          });
+        }
+      };
+    } else {
+      myEANScanner.pause();
+    }
   }, []);
 
   return (
     <>
-      <h1>This is my scanner</h1>
-      <div id="scanner" />
+      <div className="flex justify-between">
+        <h1>This is my scanner</h1>
+        <button
+          onClick={() => {
+            setIsScannerPaused(!isScannerPaused);
+          }}
+        >
+          T
+        </button>
+      </div>
+      <div id="scanner" className="w-screen lg:w-[40vw]" />
 
       {cameraList?.map((camera) => (
         <div className="break-words" key={camera.id}>
