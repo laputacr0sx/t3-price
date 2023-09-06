@@ -1,29 +1,33 @@
-import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
+import {
+  CameraDevice,
+  Html5Qrcode,
+  Html5QrcodeSupportedFormats,
+} from "html5-qrcode";
 import { useEffect, useState } from "react";
 import { demoEANID } from "../utils/helper";
 import { api } from "~/utils/api";
 import ProductModal from "./ProductModal";
-import { DemoProduct } from "~/server/api/routers/demoController";
 
 type TailorMadeScannerProp = {
   cameraWidth: number;
 };
 
 function TailorMadeScanner({ cameraWidth }: TailorMadeScannerProp) {
-  const [cameraId, setCameraId] = useState("");
-  const [scannedEAN, setScannedEAN] = useState("");
+  const [cameraList, setCameraList] = useState<CameraDevice[] | null>(null);
+  const [camera, setCamera] = useState<CameraDevice | null>(null);
+
+  const [scannedEAN, setScannedEAN] = useState<string | undefined>("");
   const [isModalShown, setIsModalShown] = useState(false);
 
   const { data: product } = api.demo.getDesired.useQuery({
-    id: demoEANID(scannedEAN),
+    id: demoEANID(scannedEAN ?? ""),
   });
 
   useEffect(() => {
     Html5Qrcode.getCameras()
       .then((devices) => {
         if (devices?.length) {
-          const cameraId = devices?.[0]?.id;
-          if (cameraId) setCameraId(cameraId);
+          setCameraList(devices);
         }
       })
       .catch((err: Error) => {
@@ -38,7 +42,8 @@ function TailorMadeScanner({ cameraWidth }: TailorMadeScannerProp) {
     myEANScanner
       .start(
         {
-          deviceId: cameraId,
+          facingMode: "environment",
+          aspectRatio: 2.3335,
         },
         // deviceId: cameraId,
         // aspectRatio: 2.3335,
@@ -48,13 +53,13 @@ function TailorMadeScanner({ cameraWidth }: TailorMadeScannerProp) {
         {
           fps: 10, // Optional, frame per seconds for qr code scanning
           qrbox: {
-            width: 300,
-            height: 110,
+            width: cameraWidth * 0.8,
+            height: cameraWidth * 0.525,
           }, // Optional, if you want bounded box UI
         },
         (decodedText, decodedResult) => {
           setScannedEAN(demoEANID(decodedText));
-          alert(`${scannedEAN} to ${demoEANID(scannedEAN)}`);
+
           if (isModalShown === false) {
             setIsModalShown(true);
           }
@@ -77,12 +82,21 @@ function TailorMadeScanner({ cameraWidth }: TailorMadeScannerProp) {
           .catch((error) => console.error(error));
       }
     };
-  });
+  }, []);
 
   return (
     <>
       <h1>This is my scanner</h1>
+      <button
+        onClick={() => {
+          return;
+        }}
+        className="border-solid border-blue-200"
+      >
+        Toggle Camera
+      </button>
       <div id="scanner"></div>
+
       {product ? (
         <ProductModal
           currentItem={product}

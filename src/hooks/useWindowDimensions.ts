@@ -9,8 +9,8 @@ export default function useWindowDimension(): Dimension {
   // Initialize state with undefined width/height so server and client renders match
   // Learn more here: https://joshwcomeau.com/react/the-perils-of-rehydration/
   const [windowSize, setWindowSize] = useState<Dimension>({
-    height: 1,
-    width: 1,
+    height: 100,
+    width: 100,
   });
 
   // Handler to call on window resize

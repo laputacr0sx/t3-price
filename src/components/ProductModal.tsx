@@ -1,6 +1,8 @@
 import React, { type Dispatch, type SetStateAction } from "react";
 import { type DemoProduct } from "~/server/api/routers/demoController";
 import Modal from "react-modal";
+import Image from "next/image";
+import { getRandomImage } from "~/utils/helper";
 
 type ProductModalType = {
   setIsModalShown: Dispatch<SetStateAction<boolean>>;
@@ -31,7 +33,16 @@ function ProductModal({
             ×
           </span>
         </button>
-        <div className="relative flex-auto p-6">
+        <div className="relative h-12 w-12 items-center justify-center align-middle">
+          <Image
+            src={getRandomImage(currentItem.images)}
+            alt="hello"
+            loading="lazy"
+            sizes="10vw"
+            fill
+          />
+        </div>
+        <div className="relative flex-auto p-3">
           <p className="my-2 text-xs leading-relaxed text-slate-500">
             {currentItem?.description}
           </p>

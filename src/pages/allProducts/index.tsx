@@ -67,11 +67,13 @@ const Index: NextPageWithLayout = () => {
           </div>
         ))}
 
-        <ProductModal
-          currentItem={currentItem!}
-          setIsModalShown={setIsModalShown}
-          isModalShown={isModalShown}
-        />
+        {currentItem ? (
+          <ProductModal
+            currentItem={currentItem}
+            setIsModalShown={setIsModalShown}
+            isModalShown={isModalShown}
+          />
+        ) : null}
       </>
     );
   }
