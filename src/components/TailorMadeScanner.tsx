@@ -1,7 +1,9 @@
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
 import { useEffect, useState } from "react";
 import { demoEANID } from "../utils/helper";
-import { Console } from "console";
+import { api } from "~/utils/api";
+import ProductModal from "./ProductModal";
+import { DemoProduct } from "~/server/api/routers/demoController";
 
 type TailorMadeScannerProp = {
   cameraWidth: number;
@@ -9,6 +11,12 @@ type TailorMadeScannerProp = {
 
 function TailorMadeScanner({ cameraWidth }: TailorMadeScannerProp) {
   const [cameraId, setCameraId] = useState("");
+  const [scannedEAN, setScannedEAN] = useState("");
+  const [isModalShown, setIsModalShown] = useState(false);
+
+  const { data: product } = api.demo.getDesired.useQuery({
+    id: demoEANID(scannedEAN),
+  });
 
   useEffect(() => {
     Html5Qrcode.getCameras()
@@ -40,12 +48,16 @@ function TailorMadeScanner({ cameraWidth }: TailorMadeScannerProp) {
         {
           fps: 10, // Optional, frame per seconds for qr code scanning
           qrbox: {
-            width: 10,
-            height: 10,
+            width: 300,
+            height: 110,
           }, // Optional, if you want bounded box UI
         },
         (decodedText, decodedResult) => {
-          alert(demoEANID(decodedText));
+          setScannedEAN(demoEANID(decodedText));
+          alert(`${scannedEAN} to ${demoEANID(scannedEAN)}`);
+          if (isModalShown === false) {
+            setIsModalShown(true);
+          }
         },
         (errorMessage) => {
           throw new Error(errorMessage);
@@ -55,20 +67,29 @@ function TailorMadeScanner({ cameraWidth }: TailorMadeScannerProp) {
         console.error(err);
       });
 
-    // return () => {
-    //   myEANScanner
-    //     .stop()
-    //     .then(() => {
-    //       console.log("hello i am returning");
-    //     })
-    //     .catch((error) => console.error(error));
-    // };
-  }, []);
+    return () => {
+      if (myEANScanner.isScanning) {
+        myEANScanner
+          .stop()
+          .then(() => {
+            myEANScanner.clear();
+          })
+          .catch((error) => console.error(error));
+      }
+    };
+  });
 
   return (
     <>
       <h1>This is my scanner</h1>
       <div id="scanner"></div>
+      {product ? (
+        <ProductModal
+          currentItem={product}
+          isModalShown={isModalShown}
+          setIsModalShown={setIsModalShown}
+        />
+      ) : null}
       <footer>This is it</footer>
     </>
   );
