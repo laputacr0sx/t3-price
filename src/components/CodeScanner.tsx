@@ -3,9 +3,10 @@ import {
   Html5QrcodeScanner,
   type QrcodeErrorCallback,
   type QrcodeSuccessCallback,
-  type Html5QrcodeCameraScanConfig,
   type Html5QrcodeFullConfig,
+  Html5QrcodeSupportedFormats,
 } from "html5-qrcode";
+import { type Html5QrcodeScannerConfig } from "html5-qrcode/esm/html5-qrcode-scanner";
 
 import { useEffect } from "react";
 import useWindowDimension from "~/hooks/useWindowDimensions";
@@ -13,15 +14,21 @@ import useWindowDimension from "~/hooks/useWindowDimensions";
 const scannerRegionId = "html5qr-code-full-region";
 
 // Creates the configuration object for Html5QrcodeScanner.
-function createConfig(props: Html5QrcodeCameraScanConfig) {
-  const config: Html5QrcodeCameraScanConfig = {
-    fps: 10,
-    aspectRatio: 1.3334,
-  };
-
+function createConfig(props: Html5QrcodeScannerConfig) {
+  const config: Html5QrcodeScannerConfig = { fps: undefined };
+  if (props.fps) {
+    config.fps = props.fps;
+  }
+  if (props.qrbox) {
+    config.qrbox = props.qrbox;
+  }
+  if (props.aspectRatio) {
+    config.aspectRatio = props.aspectRatio;
+  }
   if (props.disableFlip !== undefined) {
     config.disableFlip = props.disableFlip;
   }
+
   return config;
 }
 
@@ -31,16 +38,24 @@ type ScannerProp = {
 };
 
 const Html5QrcodePlugin = (
-  props: Html5QrcodeFullConfig & ScannerProp & Html5QrcodeCameraScanConfig
+  props: Html5QrcodeFullConfig & ScannerProp & Html5QrcodeScannerConfig
 ) => {
   const dimension = useWindowDimension();
 
   useEffect(() => {
     // when component mounts
-    const config = createConfig(props);
+    const config = createConfig({
+      ...props,
+      fps: 2,
+      aspectRatio: 1.3334,
+      qrbox: {
+        width: dimension?.width * 0.8,
+        height: dimension?.width * 0.2667,
+      },
+    });
     const verbose = props.verbose === true;
 
-    console.log(JSON.stringify(config));
+    console.log(config);
 
     // Suceess callback is required.
     if (!props.qrCodeSuccessCallback) {
@@ -51,10 +66,8 @@ const Html5QrcodePlugin = (
       scannerRegionId,
       {
         ...config,
-        qrbox: {
-          width: dimension?.width * 0.8,
-          height: dimension?.width * 0.2667,
-        },
+        formatsToSupport: [Html5QrcodeSupportedFormats.EAN_13],
+        showTorchButtonIfSupported: true,
       },
       verbose
     );
