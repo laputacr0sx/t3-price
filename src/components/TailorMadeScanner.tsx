@@ -9,25 +9,46 @@ import { type TailorMadeScannerProp } from "~/types/allTypes";
 import { api } from "~/utils/api";
 
 function TailorMadeScanner({}: TailorMadeScannerProp) {
-  const [cameraList, setCameraList] = useState<CameraDevice[] | null>(null);
+  const [cameraList, setCameraList] = useState<CameraDevice[]>([]);
   const [camera, setCamera] = useState<CameraDevice>();
-  const [scannedEAN, setScannedEAN] = useState<string | undefined>("");
+
+  const [scannedEAN, setScannedEAN] = useState<string | null>(null);
   const [isScannerPaused, setIsScannerPaused] = useState(false);
 
-  const { data: product } = api.demo.getDesired.useQuery({
-    id: demoEANID(scannedEAN ?? ""),
-  });
+  const { data: product } = api.demo.getDesired.useQuery(
+    {
+      id: demoEANID(scannedEAN ?? ""),
+    },
+    { refetchOnWindowFocus: false }
+  );
 
   useEffect(() => {
-    Html5Qrcode.getCameras()
-      .then((devices) => {
-        if (devices?.length) {
-          setCameraList(devices);
-          setCamera(devices?.[0]);
+    const capabilities = navigator.mediaDevices.getSupportedConstraints();
+
+    navigator.mediaDevices
+      .getUserMedia({
+        audio: false,
+        video: { width: 480, height: 480 },
+      })
+      .then((mediaStream) => {
+        const allMediaStream = mediaStream.getVideoTracks();
+
+        if (allMediaStream.length > 0) {
+          allMediaStream.forEach((media) => {
+            const { id, label } = media;
+            setCameraList([...cameraList, { id, label }]);
+            const randomDeviceSelect = Math.floor(
+              cameraList.length * Math.random()
+            );
+            setCamera(cameraList[randomDeviceSelect]);
+          });
+        } else {
+          console.error("sorry you have no media devices");
         }
       })
-      .catch((err: Error) => {
-        throw new Error(err.message);
+      .catch((e) => console.error(e))
+      .finally(() => {
+        console.log("all camera loaded");
       });
 
     const myEANScanner = new Html5Qrcode("scanner", {
@@ -35,11 +56,12 @@ function TailorMadeScanner({}: TailorMadeScannerProp) {
       formatsToSupport: [Html5QrcodeSupportedFormats.EAN_13],
     });
 
-    if (!isScannerPaused)
+    if (!isScannerPaused && camera) {
+      console.log(camera);
       myEANScanner
         .start(
           {
-            facingMode: "environment",
+            deviceId: camera.id,
           },
           {
             fps: 4, // Optional, frame per seconds for qr code scanning
@@ -47,7 +69,7 @@ function TailorMadeScanner({}: TailorMadeScannerProp) {
             aspectRatio: 1.7778,
           },
           (decodedText, decodedResult) => {
-            setScannedEAN(demoEANID(decodedText));
+            setScannedEAN(decodedText);
             myEANScanner
               .stop()
               .then()
@@ -55,12 +77,24 @@ function TailorMadeScanner({}: TailorMadeScannerProp) {
             setIsScannerPaused(true);
           },
           (errorMessage) => {
-            throw new Error(errorMessage);
+            throw new Error(`from starting, ${errorMessage}`);
           }
         )
         .catch((err) => {
-          console.error(err);
+          console.error("Error on initiating camera", err);
         });
+    }
+
+    // Html5Qrcode.getCameras()
+    //   .then((devices) => {
+    //     if (devices?.length) {
+    //       setCameraList(devices);
+    //       setCamera(devices?.[0]);
+    //     }
+    //   })
+    //   .catch((err: Error) => {
+    //     throw new Error(err.message);
+    //   });
 
     return () => {
       if (myEANScanner.isScanning) {
@@ -69,16 +103,17 @@ function TailorMadeScanner({}: TailorMadeScannerProp) {
         });
       }
     };
-  }, [isScannerPaused]);
+  }, [isScannerPaused, camera]);
 
   return (
     <>
       <div className="flex justify-between">
-        <h1>This is my scanner</h1>
+        <h1 key={scannedEAN}>{scannedEAN ?? `This is my scanner`}</h1>
         <button
           disabled={!isScannerPaused}
           onClick={() => {
             setIsScannerPaused(false);
+            setScannedEAN(null);
           }}
         >
           Toggle

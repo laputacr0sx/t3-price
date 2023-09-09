@@ -15,8 +15,6 @@ export const demoEANID = (ean: EAN): string => {
     .toString();
 };
 
-console.log(demoEANID(""));
-
 export const getRandomImage = (images: string[]): string => {
   const imagesLength = images?.length;
   const randomImagePosition = Math.floor(Math.random() * imagesLength);
