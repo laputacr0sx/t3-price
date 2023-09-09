@@ -23,12 +23,10 @@ function TailorMadeScanner({}: TailorMadeScannerProp) {
   );
 
   useEffect(() => {
-    const capabilities = navigator.mediaDevices.getSupportedConstraints();
-
     navigator.mediaDevices
       .getUserMedia({
         audio: false,
-        video: { width: 480, height: 480 },
+        video: { width: 320, height: 320 },
       })
       .then((mediaStream) => {
         const allMediaStream = mediaStream.getVideoTracks();
@@ -46,7 +44,7 @@ function TailorMadeScanner({}: TailorMadeScannerProp) {
           console.error("sorry you have no media devices");
         }
       })
-      .catch((e) => console.error(e))
+      .catch((e) => console.error("from navigator", e))
       .finally(() => {
         console.log("all camera loaded");
       });
