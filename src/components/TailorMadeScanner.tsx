@@ -1,17 +1,10 @@
 import { useEffect, useState } from "react";
-import {
-  type CameraDevice,
-  Html5Qrcode,
-  Html5QrcodeSupportedFormats,
-} from "html5-qrcode";
+import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
 import { demoEANID } from "../utils/helper";
 import { type TailorMadeScannerProp } from "~/types/allTypes";
 import { api } from "~/utils/api";
 
-function TailorMadeScanner({}: TailorMadeScannerProp) {
-  const [cameraList, setCameraList] = useState<CameraDevice[]>([]);
-  const [camera, setCamera] = useState<CameraDevice>();
-
+function TailorMadeScanner({ camera, cameraList }: TailorMadeScannerProp) {
   const [scannedEAN, setScannedEAN] = useState<string | null>(null);
   const [isScannerPaused, setIsScannerPaused] = useState(false);
 
@@ -23,43 +16,16 @@ function TailorMadeScanner({}: TailorMadeScannerProp) {
   );
 
   useEffect(() => {
-    navigator.mediaDevices
-      .getUserMedia({
-        audio: false,
-        video: { width: 320, height: 320 },
-      })
-      .then((mediaStream) => {
-        const allMediaStream = mediaStream.getVideoTracks();
-
-        if (allMediaStream.length > 0) {
-          allMediaStream.forEach((media) => {
-            const { id, label } = media;
-            setCameraList([...cameraList, { id, label }]);
-            const randomDeviceSelect = Math.floor(
-              cameraList.length * Math.random()
-            );
-            setCamera(cameraList[randomDeviceSelect]);
-          });
-        } else {
-          console.error("sorry you have no media devices");
-        }
-      })
-      .catch((e) => console.error("from navigator", e))
-      .finally(() => {
-        console.log("all camera loaded");
-      });
-
     const myEANScanner = new Html5Qrcode("scanner", {
       verbose: false,
       formatsToSupport: [Html5QrcodeSupportedFormats.EAN_13],
     });
 
-    if (!isScannerPaused && camera) {
-      console.log(camera);
+    if (!isScannerPaused) {
       myEANScanner
         .start(
           {
-            deviceId: camera.id,
+            deviceId: camera?.id,
           },
           {
             fps: 4, // Optional, frame per seconds for qr code scanning
@@ -126,6 +92,7 @@ function TailorMadeScanner({}: TailorMadeScannerProp) {
           <p className="text-xs font-thin ">{camera.id}</p>
         </div>
       ))}
+
       {product ? (
         <div>
           <h3>{product.title}</h3>
