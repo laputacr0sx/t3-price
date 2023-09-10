@@ -1,6 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { ReactElement, useEffect, useRef, useState } from "react";
+import { NextPageWithLayout } from "../_app";
+import Layout from "~/layouts/productDetailLayout";
 
-const VideoPlayer: React.FC = () => {
+const VideoPlayer: NextPageWithLayout = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoSource, setVideoSource] = useState<MediaStream | null>(null);
   const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]);
@@ -19,6 +21,7 @@ const VideoPlayer: React.FC = () => {
         const videoInputDevices = devices.filter(
           (device) => device.kind === "videoinput"
         );
+
         setVideoDevices(videoInputDevices);
       } catch (error) {
         console.error("Error accessing media devices:", error);
@@ -32,9 +35,10 @@ const VideoPlayer: React.FC = () => {
     try {
       setIsLoading(true);
 
-      const constraints = {
+      const constraints: MediaStreamConstraints = {
         video: {
-          deviceId: { exact: deviceId },
+          deviceId: { ideal: deviceId },
+          facingMode: "environment",
           aspectRatio: 2.5558,
         },
         audio: true,
@@ -51,12 +55,12 @@ const VideoPlayer: React.FC = () => {
 
   const renderVideoSourceOptions = () => {
     if (videoDevices.length > 0) {
-      return videoDevices.map((device) => (
+      return videoDevices.map(({ deviceId, label }) => (
         <button
-          key={device.deviceId}
-          onClick={() => void handleVideoSourceChange(device.deviceId)}
+          key={deviceId}
+          onClick={() => void handleVideoSourceChange(deviceId)}
         >
-          {device.label}
+          {label}
         </button>
       ));
     }
@@ -64,10 +68,18 @@ const VideoPlayer: React.FC = () => {
   };
 
   return (
-    <div>
-      <div className="video-container">
+    <div className="flex flex-col items-center justify-center gap-1">
+      <div className="">
         {isLoading && <div className="loading-spinner"></div>}
-        <video ref={videoRef} autoPlay playsInline controls />
+        {videoRef ? (
+          <video
+            ref={videoRef}
+            autoPlay
+            playsInline
+            controls
+            key={videoSource?.id}
+          />
+        ) : null}
       </div>
       <div>{renderVideoSourceOptions()}</div>
     </div>
@@ -75,3 +87,7 @@ const VideoPlayer: React.FC = () => {
 };
 
 export default VideoPlayer;
+
+VideoPlayer.getLayout = function getLayout(page: ReactElement) {
+  return <Layout>{page}</Layout>;
+};
