@@ -109,7 +109,7 @@ const VideoPlayer: NextPageWithLayout = () => {
     <div className="flex flex-col items-center justify-center">
       <div className="">
         {isLoading && <div className="loading-spinner"></div>}
-        <video ref={videoRef} />
+        <video ref={videoRef} playsInline autoPlay autoFocus />
         <div id="qr-code-reader"></div>
       </div>
       <div>{renderVideoSourceOptions()}</div>
