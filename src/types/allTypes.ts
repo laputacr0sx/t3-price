@@ -6,5 +6,4 @@ export type TailorMadeScannerProp = {
   cameraWidth?: number;
   cameraHeight?: number;
   camera: CameraDevice;
-  cameraList: CameraDevice[];
 };

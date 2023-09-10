@@ -4,7 +4,7 @@ import { demoEANID } from "../utils/helper";
 import { type TailorMadeScannerProp } from "~/types/allTypes";
 import { api } from "~/utils/api";
 
-function TailorMadeScanner({ camera, cameraList }: TailorMadeScannerProp) {
+function TailorMadeScanner({ camera }: TailorMadeScannerProp) {
   const [scannedEAN, setScannedEAN] = useState<string | null>(null);
   const [isScannerPaused, setIsScannerPaused] = useState(false);
 
@@ -85,13 +85,6 @@ function TailorMadeScanner({ camera, cameraList }: TailorMadeScannerProp) {
       </div>
       <div id="scanner" className="w-screen lg:w-[40vw]" />
       <div id="capturedImage" />
-
-      {cameraList?.map((camera) => (
-        <div className="break-words" key={camera.id}>
-          <h2>{camera.label}</h2>
-          <p className="text-xs font-thin ">{camera.id}</p>
-        </div>
-      ))}
 
       {product ? (
         <div>
