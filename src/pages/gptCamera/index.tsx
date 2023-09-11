@@ -40,7 +40,7 @@ const VideoPlayer: NextPageWithLayout = () => {
         formatsToSupport: [Html5QrcodeSupportedFormats.EAN_13],
       });
 
-      const scanQRCode = async (videoElement: HTMLVideoElement) => {
+      const scanQRCode = async () => {
         if (videoSource) {
           try {
             await html5QrCode.start(
@@ -71,7 +71,7 @@ const VideoPlayer: NextPageWithLayout = () => {
         }
       };
 
-      void scanQRCode(videoRef.current);
+      void scanQRCode();
 
       return () => {
         if (isScanning) {
