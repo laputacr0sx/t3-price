@@ -13,7 +13,9 @@ const MyScanner: NextPageWithLayout = () => {
     const getVideoDevices = async () => {
       try {
         const devices = await navigator.mediaDevices.getUserMedia({
-          video: true,
+          video: {
+            aspectRatio: 2.3335,
+          },
         });
 
         const streams = devices.getVideoTracks();
@@ -23,12 +25,11 @@ const MyScanner: NextPageWithLayout = () => {
         //   return device.kind === "videoinput";
         // });
 
-        const videoInputDevices = streams.filter((stream) => {
-          console.log(JSON.stringify(stream, null, 2));
-          return stream.kind === "video";
-        });
+        // const videoInputDevices = streams.filter((stream) => {
+        //   return stream.kind === "video";
+        // });
 
-        setVideoDevices(videoInputDevices);
+        setVideoDevices(streams);
       } catch (error) {
         console.error("Error accessing media devices:", error);
       }
@@ -40,10 +41,10 @@ const MyScanner: NextPageWithLayout = () => {
   const handleVideoSourceChange = async (deviceId: string) => {
     try {
       setIsLoading(true);
-      const constraints = {
+      const constraints: MediaStreamConstraints = {
         video: {
           deviceId: deviceId,
-          aspectRatio: 1,
+          aspectRatio: 2.3335,
         },
       };
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
@@ -69,18 +70,10 @@ const MyScanner: NextPageWithLayout = () => {
 
   return (
     <div className="flex-col items-center justify-center">
-      {renderVideoSourceOptions()}
-      {/* {videoDevices?.map(({ deviceId, label }, index) => (
-        
-        <button
-          className="break-words"
-          key={deviceId}
-          onClick={() => void handleVideoSourceChange(deviceId)}
-        >
-          Device {index + 1}: {label}
-        </button>
-      ))} */}
-      <div>
+      <div className="flex items-center justify-center">
+        {renderVideoSourceOptions()}
+      </div>
+      <div className="flex-col items-center justify-center">
         {isLoading && <div className="loading-spinner"></div>}
         {videoSource ? <TailorMadeScanner stream={videoSource} /> : null}
       </div>

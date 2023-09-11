@@ -5,20 +5,21 @@ import { demoEANID } from "../utils/helper";
 import { api } from "~/utils/api";
 
 function TailorMadeScanner({ stream }: { stream: MediaStream }) {
+  const { id: deviceId } = stream;
+
   const [scannedEAN, setScannedEAN] = useState<string | null>(null);
   const [isScannerPaused, setIsScannerPaused] = useState(false);
 
-  const { data: product } = api.demo.getDesired.useQuery(
+  const { data: product, error: productError } = api.demo.getDesired.useQuery(
     {
       id: demoEANID(scannedEAN ?? ""),
     },
     { refetchOnWindowFocus: false }
   );
 
-  console.log(JSON.stringify(stream, null, 2));
-
   useEffect(() => {
-    // const windowWidth = window.innerWidth;
+    const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
 
     const myEANScanner = new Html5Qrcode("scanner", {
       verbose: false,
@@ -29,12 +30,12 @@ function TailorMadeScanner({ stream }: { stream: MediaStream }) {
       myEANScanner
         .start(
           {
-            deviceId: stream.id,
+            deviceId,
           },
           {
-            fps: 10, // Optional, frame per seconds for qr code scanning
-            qrbox: { width: 180, height: 130 },
-            aspectRatio: 1,
+            fps: 4, // Optional, frame per seconds for qr code scanning
+            qrbox: { width: 300, height: 130 },
+            // aspectRatio: 2.3335,
           },
           (decodedText, decodedResult) => {
             console.log(JSON.stringify(decodedResult, null, 2));
@@ -59,6 +60,11 @@ function TailorMadeScanner({ stream }: { stream: MediaStream }) {
       }
     };
   }, [isScannerPaused, stream]);
+
+  if (productError)
+    <>
+      <h1>Error occured during fetching</h1>
+    </>;
 
   return (
     <>
