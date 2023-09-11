@@ -29,7 +29,7 @@ function TailorMadeScanner({ camera }: TailorMadeScannerProp) {
           },
           {
             fps: 4, // Optional, frame per seconds for qr code scanning
-            // qrbox: { width: 280, height: 170 },
+            qrbox: { width: 280, height: 170 },
             aspectRatio: 1.7778,
           },
           (decodedText, decodedResult) => {
@@ -45,17 +45,6 @@ function TailorMadeScanner({ camera }: TailorMadeScannerProp) {
           console.error("Error on initiating camera", err);
         });
     }
-
-    // Html5Qrcode.getCameras()
-    //   .then((devices) => {
-    //     if (devices?.length) {
-    //       setCameraList(devices);
-    //       setCamera(devices?.[0]);
-    //     }
-    //   })
-    //   .catch((err: Error) => {
-    //     throw new Error(err.message);
-    //   });
 
     return () => {
       if (myEANScanner.isScanning) {

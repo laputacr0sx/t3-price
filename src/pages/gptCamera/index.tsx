@@ -1,11 +1,6 @@
 import { type ReactElement, useEffect, useRef, useState } from "react";
 
-import {
-  Html5Qrcode,
-  Html5QrcodeSupportedFormats,
-  type QrcodeErrorCallback,
-  type QrcodeSuccessCallback,
-} from "html5-qrcode";
+import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
 import { type NextPageWithLayout } from "../_app";
 import Layout from "~/layouts/productDetailLayout";
 
@@ -14,6 +9,7 @@ const VideoPlayer: NextPageWithLayout = () => {
   const [videoSource, setVideoSource] = useState<MediaStream | null>(null);
   const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isScanning, setIsScanning] = useState(false);
 
   useEffect(() => {
     if (videoRef.current && videoSource) {
@@ -39,48 +35,53 @@ const VideoPlayer: NextPageWithLayout = () => {
 
   useEffect(() => {
     if (videoRef.current) {
-      const html5QrCode = new Html5Qrcode("qr-code-reader", {
+      const html5QrCode = new Html5Qrcode("video", {
         verbose: false,
         formatsToSupport: [Html5QrcodeSupportedFormats.EAN_13],
       });
 
       const scanQRCode = async (videoElement: HTMLVideoElement) => {
-        try {
-          await html5QrCode.start(
-            // needed address
-            { facingMode: "environment" },
-            // videoElement,
-            { fps: 1, qrbox: { width: 200, height: 100 } },
-            (text, result) => {
-              console.log(text);
-              console.log(JSON.stringify(result, null, 2));
-              const onSuccessTerminate = async () => {
-                try {
-                  await html5QrCode.stop();
-                } catch (error) {
-                  throw new Error("Error in terminating after onScanSuccess");
-                }
-              };
-              void onSuccessTerminate();
-            },
-            (errorMessage, error) => {
-              console.error(errorMessage, error);
-            }
-          );
-        } catch (error) {
-          console.error("QR Code Scanner Initiating error:", error);
+        if (videoSource) {
+          try {
+            await html5QrCode.start(
+              { deviceId: videoSource.id },
+              // videoElement,
+              { fps: 1, qrbox: { width: 200, height: 100 } },
+              (text, result) => {
+                setIsScanning(true);
+                console.log(text);
+                console.log(JSON.stringify(result, null, 2));
+                const onSuccessTerminate = async () => {
+                  try {
+                    setIsScanning(false);
+                    await html5QrCode.stop();
+                  } catch (error) {
+                    throw new Error("Error in terminating after onScanSuccess");
+                  }
+                };
+                void onSuccessTerminate();
+              },
+              (errorMessage, error) => {
+                console.error(errorMessage, error);
+              }
+            );
+          } catch (error) {
+            console.error("QR Code Scanner Initiating error:", error);
+          }
         }
       };
 
       void scanQRCode(videoRef.current);
 
       return () => {
-        html5QrCode
-          .stop()
-          .catch((e) => console.error("Error in terminating Scanner", e));
+        if (isScanning) {
+          html5QrCode
+            .stop()
+            .catch((e) => console.error("Error in terminating Scanner", e));
+        }
       };
     }
-  }, []);
+  }, [isScanning, videoSource]);
 
   const handleVideoSourceChange = async (deviceId: string) => {
     try {
@@ -92,8 +93,8 @@ const VideoPlayer: NextPageWithLayout = () => {
         },
         audio: true,
       };
-
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
+
       setVideoSource(stream);
       setIsLoading(false);
     } catch (error) {
@@ -120,10 +121,12 @@ const VideoPlayer: NextPageWithLayout = () => {
     <div className="flex flex-col items-center justify-center">
       <div className="">
         {isLoading && <div className="loading-spinner"></div>}
-        <video ref={videoRef} playsInline autoPlay autoFocus />
+        <video id={"video"} ref={videoRef} playsInline autoPlay autoFocus />
         <div id="qr-code-reader"></div>
       </div>
-      <div>{renderVideoSourceOptions()}</div>
+      <div className="flex flex-col items-center justify-center">
+        {renderVideoSourceOptions()}
+      </div>
     </div>
   );
 };
