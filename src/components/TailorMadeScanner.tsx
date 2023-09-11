@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
 import { demoEANID } from "../utils/helper";
-import { type TailorMadeScannerProp } from "~/types/allTypes";
+
 import { api } from "~/utils/api";
 
-function TailorMadeScanner({ camera }: TailorMadeScannerProp) {
+function TailorMadeScanner({ stream }: { stream: MediaStream }) {
   const [scannedEAN, setScannedEAN] = useState<string | null>(null);
   const [isScannerPaused, setIsScannerPaused] = useState(false);
 
@@ -27,12 +27,12 @@ function TailorMadeScanner({ camera }: TailorMadeScannerProp) {
       myEANScanner
         .start(
           {
-            deviceId: camera?.id,
+            deviceId: stream?.id,
           },
           {
             fps: 1, // Optional, frame per seconds for qr code scanning
             qrbox: { width: windowWidth / 1.22, height: windowWidth / 3.11 },
-            aspectRatio: 1.7778,
+            aspectRatio: 2.3335,
           },
           (decodedText, decodedResult) => {
             console.log(JSON.stringify(decodedResult, null, 2));
@@ -56,7 +56,7 @@ function TailorMadeScanner({ camera }: TailorMadeScannerProp) {
         });
       }
     };
-  }, [isScannerPaused, camera]);
+  }, [isScannerPaused, stream]);
 
   return (
     <>
@@ -72,9 +72,8 @@ function TailorMadeScanner({ camera }: TailorMadeScannerProp) {
           Toggle
         </button>
       </div>
-      <div id="scanner" className="w-screen lg:w-[40vw]" />
+      <div id="scanner" />
       <div id="capturedImage" />
-
       {product ? (
         <div>
           <h3>{product.title}</h3>

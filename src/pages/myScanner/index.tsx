@@ -1,26 +1,14 @@
-import React, {
-  useEffect,
-  type ReactElement,
-  useState,
-  useCallback,
-} from "react";
+import React, { useEffect, type ReactElement, useState } from "react";
 import TailorMadeScanner from "~/components/TailorMadeScanner";
 
 import { type NextPageWithLayout } from "../_app";
 import Layout from "~/layouts/productDetailLayout";
-import { type CameraDevice } from "html5-qrcode";
 
 const MyScanner: NextPageWithLayout = () => {
   const [videoSource, setVideoSource] = useState<MediaStream | null>(null);
   const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]);
-  const [cameraList, setCameraList] = useState<CameraDevice[]>([]);
+
   const [isLoading, setIsLoading] = useState(false);
-
-  const randomDeviceSelect = useCallback(() => {
-    return Math.floor(cameraList.length * Math.random());
-  }, [cameraList]);
-
-  const selectedCamera = cameraList[randomDeviceSelect()];
 
   useEffect(() => {
     const getVideoDevices = async () => {
@@ -36,24 +24,6 @@ const MyScanner: NextPageWithLayout = () => {
     };
 
     void getVideoDevices();
-  }, []);
-
-  useEffect(() => {
-    const obtainUserMedia = async () => {
-      try {
-        const streamTracks = await navigator.mediaDevices.getUserMedia({
-          video: { width: 320, height: 320 },
-        });
-        streamTracks.getTracks().forEach((stream) => {
-          const { id, label } = stream;
-          setCameraList([...cameraList, { id, label }]);
-        });
-      } catch (error) {
-        throw new Error("Error obtaining camera from parent");
-      }
-    };
-
-    void obtainUserMedia();
   }, []);
 
   const handleVideoSourceChange = async (deviceId: string) => {
@@ -89,7 +59,7 @@ const MyScanner: NextPageWithLayout = () => {
       ))}
       <div>
         {isLoading && <div className="loading-spinner"></div>}
-        {selectedCamera ? <TailorMadeScanner camera={selectedCamera} /> : null}
+        {videoSource ? <TailorMadeScanner stream={videoSource} /> : null}
       </div>
     </div>
   );
