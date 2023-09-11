@@ -14,15 +14,6 @@ const VideoPlayer: NextPageWithLayout = () => {
   const [videoSource, setVideoSource] = useState<MediaStream | null>(null);
   const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [isScanning, setIsScanning] = useState(false);
-
-  const onScanSuccessHandler: QrcodeSuccessCallback = (text, result) => {
-    console.log(text);
-    console.log(JSON.stringify(result, null, 2));
-  };
-  const onScanErrorHandler: QrcodeErrorCallback = (errorMessage, error) => {
-    console.error(errorMessage, error);
-  };
 
   useEffect(() => {
     if (videoRef.current && videoSource) {
@@ -48,25 +39,45 @@ const VideoPlayer: NextPageWithLayout = () => {
 
   useEffect(() => {
     if (videoRef.current) {
-      const html5QrCode = new Html5Qrcode("qr-code-reader");
+      const html5QrCode = new Html5Qrcode("qr-code-reader", {
+        verbose: false,
+        formatsToSupport: [Html5QrcodeSupportedFormats.EAN_13],
+      });
 
       const scanQRCode = async (videoElement: HTMLVideoElement) => {
         try {
           await html5QrCode.start(
-            videoElement,
-            { fps: 10, qrbox: 250 },
-            onScanSuccessHandler,
-            onScanErrorHandler
+            // needed address
+            { facingMode: "environment" },
+            // videoElement,
+            { fps: 1, qrbox: { width: 200, height: 100 } },
+            (text, result) => {
+              console.log(text);
+              console.log(JSON.stringify(result, null, 2));
+              const onSuccessTerminate = async () => {
+                try {
+                  await html5QrCode.stop();
+                } catch (error) {
+                  throw new Error("Error in terminating after onScanSuccess");
+                }
+              };
+              void onSuccessTerminate();
+            },
+            (errorMessage, error) => {
+              console.error(errorMessage, error);
+            }
           );
         } catch (error) {
-          console.error("QR code scanning error:", error);
+          console.error("QR Code Scanner Initiating error:", error);
         }
       };
 
       void scanQRCode(videoRef.current);
 
       return () => {
-        html5QrCode.stop().catch((e) => console.error(e));
+        html5QrCode
+          .stop()
+          .catch((e) => console.error("Error in terminating Scanner", e));
       };
     }
   }, []);
@@ -76,8 +87,8 @@ const VideoPlayer: NextPageWithLayout = () => {
       setIsLoading(true);
       const constraints = {
         video: {
-          deviceId: { exact: deviceId },
-          aspectRatio: 2.5558,
+          deviceId: { ideal: deviceId },
+          aspectRatio: 1.7778,
         },
         audio: true,
       };

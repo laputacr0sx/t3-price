@@ -34,10 +34,7 @@ function TailorMadeScanner({ camera }: TailorMadeScannerProp) {
           },
           (decodedText, decodedResult) => {
             setScannedEAN(decodedText);
-            myEANScanner
-              .stop()
-              .then()
-              .catch((e) => console.error(e));
+            myEANScanner.stop().catch((e) => console.error(e));
             setIsScannerPaused(true);
           },
           (errorMessage) => {
