@@ -16,6 +16,8 @@ function TailorMadeScanner({ camera }: TailorMadeScannerProp) {
   );
 
   useEffect(() => {
+    const windowWidth = window.innerWidth;
+
     const myEANScanner = new Html5Qrcode("scanner", {
       verbose: false,
       formatsToSupport: [Html5QrcodeSupportedFormats.EAN_13],
@@ -28,11 +30,12 @@ function TailorMadeScanner({ camera }: TailorMadeScannerProp) {
             deviceId: camera?.id,
           },
           {
-            fps: 4, // Optional, frame per seconds for qr code scanning
-            qrbox: { width: 280, height: 170 },
+            fps: 1, // Optional, frame per seconds for qr code scanning
+            qrbox: { width: windowWidth / 1.22, height: windowWidth / 3.11 },
             aspectRatio: 1.7778,
           },
           (decodedText, decodedResult) => {
+            console.log(JSON.stringify(decodedResult, null, 2));
             setScannedEAN(decodedText);
             myEANScanner.stop().catch((e) => console.error(e));
             setIsScannerPaused(true);
