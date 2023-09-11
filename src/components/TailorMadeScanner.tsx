@@ -19,7 +19,6 @@ function TailorMadeScanner({ stream }: { stream: MediaStream }) {
 
   useEffect(() => {
     const windowWidth = window.innerWidth;
-    const windowHeight = window.innerHeight;
 
     const myEANScanner = new Html5Qrcode("scanner", {
       verbose: false,
@@ -80,7 +79,7 @@ function TailorMadeScanner({ stream }: { stream: MediaStream }) {
           Toggle
         </button>
       </div>
-      <div id="scanner" className=" w-full resize-none" />
+      <div id="scanner" className="w-screen resize-none" autoFocus />
       <div id="capturedImage" />
       {product ? (
         <div>

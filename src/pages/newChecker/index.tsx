@@ -34,7 +34,7 @@ const NewChecker: NextPageWithLayout = () => {
   return (
     <div className="flex h-screen flex-col items-center">
       <Html5QrcodePlugin
-        fps={10}
+        fps={4}
         qrCodeSuccessCallback={onNewScanResult}
         verbose={false}
       />

@@ -44,14 +44,15 @@ const Html5QrcodePlugin = (
   const dimension = useWindowDimension();
 
   useEffect(() => {
+    const width = window.innerWidth;
+
     // when component mounts
     const config = createConfig({
       ...props,
-      fps: 2,
-      aspectRatio: 2.3335,
+      aspectRatio: 1,
       qrbox: {
-        width: dimension?.width * 0.8,
-        height: dimension?.width * 0.2667,
+        width: width * 0.8,
+        height: width * 0.2667,
       },
     });
     const verbose = props.verbose === true;
@@ -89,7 +90,7 @@ const Html5QrcodePlugin = (
   return (
     <>
       <h1>Place barcode inside the border</h1>
-      <div id={scannerRegionId} className="h-[20vh] min-h-min w-screen" />
+      <div id={scannerRegionId} className="w-[90%]" />
     </>
   );
 };

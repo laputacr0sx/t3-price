@@ -12,11 +12,6 @@ const VideoPlayer: NextPageWithLayout = () => {
   const [isScanning, setIsScanning] = useState(false);
 
   useEffect(() => {
-    const requestPermission = async () => {
-      // await navigator.permissions.query({ name: "notifications" });
-    };
-
-    void requestPermission();
     if (videoRef.current && videoSource) {
       videoRef.current.srcObject = videoSource;
     }
