@@ -45,9 +45,25 @@ const MyScanner: NextPageWithLayout = () => {
     }
   };
 
+  const renderVideoSourceOptions = () => {
+    if (videoDevices.length > 0) {
+      return videoDevices.map(({ deviceId, label }) => (
+        <button
+          key={deviceId}
+          onClick={() => void handleVideoSourceChange(deviceId)}
+        >
+          {label}
+        </button>
+      ));
+    }
+    return null;
+  };
+
   return (
     <div className="flex-col items-center justify-center">
-      {videoDevices?.map(({ deviceId, label }, index) => (
+      {renderVideoSourceOptions()}
+      {/* {videoDevices?.map(({ deviceId, label }, index) => (
+        
         <button
           className="break-words"
           key={deviceId}
@@ -55,7 +71,7 @@ const MyScanner: NextPageWithLayout = () => {
         >
           Device {index + 1}: {label}
         </button>
-      ))}
+      ))} */}
       <div>
         {isLoading && <div className="loading-spinner"></div>}
         {videoSource ? <TailorMadeScanner stream={videoSource} /> : null}
