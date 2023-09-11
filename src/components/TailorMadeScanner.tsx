@@ -30,7 +30,7 @@ function TailorMadeScanner({ stream }: { stream: MediaStream }) {
             deviceId: stream?.id,
           },
           {
-            fps: 1, // Optional, frame per seconds for qr code scanning
+            fps: 3, // Optional, frame per seconds for qr code scanning
             qrbox: { width: windowWidth / 1.22, height: windowWidth / 3.11 },
             aspectRatio: 2.3335,
           },
@@ -72,7 +72,7 @@ function TailorMadeScanner({ stream }: { stream: MediaStream }) {
           Toggle
         </button>
       </div>
-      <div id="scanner" />
+      <div id="scanner" className="resize-none" />
       <div id="capturedImage" />
       {product ? (
         <div>
