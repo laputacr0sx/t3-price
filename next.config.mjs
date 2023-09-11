@@ -8,20 +8,19 @@ await import("./src/env.mjs");
 const config = {
   reactStrictMode: false,
   // eslint-disable-next-line @typescript-eslint/require-await
-  headers: async () => {
-    return [
-      {
-        source: "/",
-        headers: [
-          {
-            key: "Permissions-Policy",
-            value:
-              "camera=(), microphone=(), geolocation=(), browsing-topics=()",
-          },
-        ],
-      },
-    ];
-  },
+  // headers: async () => {
+  //   return [
+  //     {
+  //       source: "/myScanner",
+  //       headers: [
+  //         {
+  //           key: "Permissions-Policy",
+  //           value: "camera=*",
+  //         },
+  //       ],
+  //     },
+  //   ];
+  // },
   images: {
     domains: ["image.dummyjson.com", "i.dummyjson.com"],
   },

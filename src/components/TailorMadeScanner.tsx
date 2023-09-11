@@ -18,7 +18,7 @@ function TailorMadeScanner({ stream }: { stream: MediaStream }) {
   console.log(JSON.stringify(stream, null, 2));
 
   useEffect(() => {
-    const windowWidth = window.innerWidth;
+    // const windowWidth = window.innerWidth;
 
     const myEANScanner = new Html5Qrcode("scanner", {
       verbose: false,
@@ -33,7 +33,7 @@ function TailorMadeScanner({ stream }: { stream: MediaStream }) {
           },
           {
             fps: 10, // Optional, frame per seconds for qr code scanning
-            // qrbox: { width: 180, height: 130 },
+            qrbox: { width: 180, height: 130 },
             aspectRatio: 1,
           },
           (decodedText, decodedResult) => {
@@ -75,7 +75,7 @@ function TailorMadeScanner({ stream }: { stream: MediaStream }) {
           Toggle
         </button>
       </div>
-      <iframe id="scanner" className=" w-full resize-none" />
+      <div id="scanner" className=" w-full resize-none" />
       <div id="capturedImage" />
       {product ? (
         <div>

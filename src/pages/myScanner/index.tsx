@@ -6,16 +6,28 @@ import Layout from "~/layouts/productDetailLayout";
 
 const MyScanner: NextPageWithLayout = () => {
   const [videoSource, setVideoSource] = useState<MediaStream | null>(null);
-  const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]);
+  const [videoDevices, setVideoDevices] = useState<MediaStreamTrack[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const getVideoDevices = async () => {
       try {
-        const devices = await navigator.mediaDevices.enumerateDevices();
-        const videoInputDevices = devices.filter(
-          (device) => device.kind === "videoinput"
-        );
+        const devices = await navigator.mediaDevices.getUserMedia({
+          video: true,
+        });
+
+        const streams = devices.getVideoTracks();
+
+        // const videoInputDevices = devices.filter((device) => {
+        //   console.log(JSON.stringify(device, null, 2));
+        //   return device.kind === "videoinput";
+        // });
+
+        const videoInputDevices = streams.filter((stream) => {
+          console.log(JSON.stringify(stream, null, 2));
+          return stream.kind === "video";
+        });
+
         setVideoDevices(videoInputDevices);
       } catch (error) {
         console.error("Error accessing media devices:", error);
@@ -33,7 +45,6 @@ const MyScanner: NextPageWithLayout = () => {
           deviceId: deviceId,
           aspectRatio: 1,
         },
-        audio: true,
       };
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
 
@@ -47,11 +58,8 @@ const MyScanner: NextPageWithLayout = () => {
 
   const renderVideoSourceOptions = () => {
     if (videoDevices.length > 0) {
-      return videoDevices.map(({ deviceId, label }) => (
-        <button
-          key={deviceId}
-          onClick={() => void handleVideoSourceChange(deviceId)}
-        >
+      return videoDevices.map(({ id, label }) => (
+        <button key={id} onClick={() => void handleVideoSourceChange(id)}>
           {label}
         </button>
       ));
