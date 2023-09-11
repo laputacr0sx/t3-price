@@ -7,7 +7,21 @@ await import("./src/env.mjs");
 /** @type {import("next").NextConfig} */
 const config = {
   reactStrictMode: false,
-
+  // eslint-disable-next-line @typescript-eslint/require-await
+  headers: async () => {
+    return [
+      {
+        source: "/",
+        headers: [
+          {
+            key: "Permissions-Policy",
+            value:
+              "camera=(), microphone=(), geolocation=(), browsing-topics=()",
+          },
+        ],
+      },
+    ];
+  },
   images: {
     domains: ["image.dummyjson.com", "i.dummyjson.com"],
   },

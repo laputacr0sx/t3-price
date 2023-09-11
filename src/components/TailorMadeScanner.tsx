@@ -75,7 +75,7 @@ function TailorMadeScanner({ stream }: { stream: MediaStream }) {
           Toggle
         </button>
       </div>
-      <div id="scanner" className=" w-full resize-none" />
+      <iframe id="scanner" className=" w-full resize-none" />
       <div id="capturedImage" />
       {product ? (
         <div>
