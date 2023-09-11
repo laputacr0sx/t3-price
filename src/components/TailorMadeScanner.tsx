@@ -15,6 +15,8 @@ function TailorMadeScanner({ stream }: { stream: MediaStream }) {
     { refetchOnWindowFocus: false }
   );
 
+  console.log(JSON.stringify(stream, null, 2));
+
   useEffect(() => {
     const windowWidth = window.innerWidth;
 
@@ -27,12 +29,12 @@ function TailorMadeScanner({ stream }: { stream: MediaStream }) {
       myEANScanner
         .start(
           {
-            deviceId: stream?.id,
+            deviceId: stream.id,
           },
           {
-            fps: 3, // Optional, frame per seconds for qr code scanning
-            qrbox: { width: windowWidth / 1.22, height: windowWidth / 3.11 },
-            aspectRatio: 2.3335,
+            fps: 10, // Optional, frame per seconds for qr code scanning
+            // qrbox: { width: 180, height: 130 },
+            aspectRatio: 1,
           },
           (decodedText, decodedResult) => {
             console.log(JSON.stringify(decodedResult, null, 2));
@@ -62,6 +64,7 @@ function TailorMadeScanner({ stream }: { stream: MediaStream }) {
     <>
       <div className="flex justify-between">
         <h1 key={scannedEAN}>{scannedEAN ?? `This is my scanner`}</h1>
+        <h2>{isScannerPaused ? "Scan paused" : "Awaiting valid barcodes"}</h2>
         <button
           disabled={!isScannerPaused}
           onClick={() => {
@@ -72,7 +75,7 @@ function TailorMadeScanner({ stream }: { stream: MediaStream }) {
           Toggle
         </button>
       </div>
-      <div id="scanner" className="resize-none" />
+      <div id="scanner" className=" w-full resize-none" />
       <div id="capturedImage" />
       {product ? (
         <div>

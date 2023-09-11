@@ -7,7 +7,6 @@ import Layout from "~/layouts/productDetailLayout";
 const MyScanner: NextPageWithLayout = () => {
   const [videoSource, setVideoSource] = useState<MediaStream | null>(null);
   const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]);
-
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -31,8 +30,8 @@ const MyScanner: NextPageWithLayout = () => {
       setIsLoading(true);
       const constraints = {
         video: {
-          deviceId: { ideal: deviceId },
-          aspectRatio: 1.7778,
+          deviceId: deviceId,
+          aspectRatio: 1,
         },
         audio: true,
       };
