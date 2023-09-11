@@ -39,8 +39,7 @@ export const demoRouter = createTRPCRouter({
         id: z.string({ invalid_type_error: "invalid input" }).max(30),
       })
     )
-    .query(async ({ input, ctx }) => {
-      // await ctx.prisma.product.findUniqueOrThrow({ where: { ean: input.id } });
+    .query(async ({ input }) => {
       const demoProductResponse = await axios.get<DemoProduct>(
         `http://dummyjson.com/product/${input.id}`
       );
