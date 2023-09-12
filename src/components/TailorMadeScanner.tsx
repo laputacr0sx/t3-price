@@ -66,19 +66,22 @@ function TailorMadeScanner({ stream }: { stream: MediaStream }) {
 
   return (
     <>
-      <div className="flex justify-between">
-        <h1 key={scannedEAN}>{scannedEAN ?? `This is my scanner`}</h1>
-        <h2>{isScannerPaused ? "Scan paused" : "Awaiting valid barcodes"}</h2>
+      <div className="flex justify-between bg-slate-900 px-4 py-1">
+        <h2 className="self-center align-middle">
+          {isScannerPaused ? "Scan paused" : "Awaiting valid barcodes"}
+        </h2>
         <button
           disabled={!isScannerPaused}
           onClick={() => {
             setIsScannerPaused(false);
             setScannedEAN(null);
           }}
+          className="rounded-md border-2 border-solid border-slate-200 px-2 py-1"
         >
           Toggle
         </button>
       </div>
+      <h1 key={scannedEAN}>{scannedEAN ?? `This is my scanner`}</h1>
       <div id="scanner" className="w-screen resize-none" autoFocus />
       <div id="capturedImage" />
       {product ? (

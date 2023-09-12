@@ -45,9 +45,8 @@ const MyScanner: NextPageWithLayout = () => {
       const constraints: MediaStreamConstraints = {
         video: {
           deviceId: deviceId,
-          aspectRatio: 1,
+          aspectRatio: 1.334,
         },
-        audio: true,
       };
       const mediaStream = await navigator.mediaDevices.getUserMedia(
         constraints
@@ -63,9 +62,13 @@ const MyScanner: NextPageWithLayout = () => {
 
   const renderVideoSourceOptions = () => {
     if (videoDevices.length > 0) {
-      return videoDevices.map(({ id, label }) => (
-        <button key={id} onClick={() => void handleVideoSourceChange(id)}>
-          {label}
+      return videoDevices.map(({ id, label }, index) => (
+        <button
+          key={id}
+          onClick={() => void handleVideoSourceChange(id)}
+          className="mb-1 mt-1 border-2 px-1"
+        >
+          Device {index + 1} : {label}
         </button>
       ));
     }
@@ -74,10 +77,7 @@ const MyScanner: NextPageWithLayout = () => {
 
   return (
     <div className="flex-col items-center justify-center">
-      <button className="text-ellipsis text-center align-middle">
-        Request User Camera Permission
-      </button>
-      <div className="flex items-center justify-center">
+      <div className="flex items-center justify-center gap-1">
         {renderVideoSourceOptions()}
       </div>
       <div className="flex-col items-center justify-center">
