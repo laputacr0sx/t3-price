@@ -6,17 +6,16 @@ import Layout from "~/layouts/productDetailLayout";
 
 const MyScanner: NextPageWithLayout = () => {
   const [videoSource, setVideoSource] = useState<MediaStream | null>(null);
-  const [videoDevices, setVideoDevices] = useState<MediaStreamTrack[]>([]);
+  const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const getVideoDevices = async () => {
       try {
-        const devices = await navigator.mediaDevices.getUserMedia({
-          video: true,
-          audio: true,
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const streams = devices.filter((device) => {
+          return device.kind === "videoinput";
         });
-        const streams = devices.getTracks();
         console.log(streams);
         setVideoDevices(streams);
       } catch (error) {
@@ -48,10 +47,10 @@ const MyScanner: NextPageWithLayout = () => {
 
   const renderVideoSourceOptions = () => {
     if (videoDevices.length > 0) {
-      return videoDevices.map(({ id, label }, index) => (
+      return videoDevices.map(({ deviceId, label }, index) => (
         <button
-          key={id}
-          onClick={() => void handleVideoSourceChange(id)}
+          key={deviceId}
+          onClick={() => void handleVideoSourceChange(deviceId)}
           className="mb-1 mt-1 border-2 px-1"
         >
           Device {index + 1} : {label}
