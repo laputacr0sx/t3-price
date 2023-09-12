@@ -6,7 +6,6 @@ import { api } from "~/utils/api";
 
 function TailorMadeScanner({ stream }: { stream: MediaStream }) {
   const { id: streamId } = stream;
-
   const [scannedEAN, setScannedEAN] = useState<string | null>(null);
   const [isScannerPaused, setIsScannerPaused] = useState(false);
 

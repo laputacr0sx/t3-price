@@ -55,6 +55,7 @@ const MyScanner: NextPageWithLayout = () => {
           className="mb-1 mt-1 border-2 px-1"
         >
           Device {index + 1} : {label}
+          {deviceId}
         </button>
       ));
     }
@@ -68,7 +69,7 @@ const MyScanner: NextPageWithLayout = () => {
       </div>
       <div className="flex-col items-center justify-center">
         {isLoading && <div className="loading-spinner"></div>}
-        {videoSource ? <TailorMadeScanner stream={videoSource} /> : null}
+        {/* {videoSource ? <TailorMadeScanner stream={videoSource} /> : null} */}
       </div>
     </div>
   );
