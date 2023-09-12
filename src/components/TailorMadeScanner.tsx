@@ -55,11 +55,11 @@ function TailorMadeScanner({ stream }: { stream: MediaStream }) {
     return () => {
       if (myEANScanner.isScanning) {
         myEANScanner.stop().catch(() => {
-          return;
+          throw new Error("Error in stopping scanner");
         });
       }
     };
-  }, [isScannerPaused, streamId]);
+  }, [isScannerPaused, stream]);
 
   if (productError)
     <>

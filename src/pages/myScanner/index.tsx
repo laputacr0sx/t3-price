@@ -69,7 +69,7 @@ const MyScanner: NextPageWithLayout = () => {
 
   return (
     <div className="flex-col items-center justify-center">
-      <div className="flex items-center justify-center gap-1">
+      <div className="flex-col items-center justify-center gap-1">
         {videoDevices.length > 0
           ? videoDevices.map(({ deviceId, label }, index) => (
               <button
