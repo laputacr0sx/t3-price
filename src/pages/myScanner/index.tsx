@@ -14,8 +14,10 @@ const MyScanner: NextPageWithLayout = () => {
       try {
         const devices = await navigator.mediaDevices.getUserMedia({
           video: true,
+          audio: true,
         });
-        const streams = devices.getVideoTracks();
+        const streams = devices.getTracks();
+        console.log(streams);
         setVideoDevices(streams);
       } catch (error) {
         console.error("Error accessing media devices during render:", error);
@@ -33,7 +35,6 @@ const MyScanner: NextPageWithLayout = () => {
           deviceId: { ideal: deviceId },
           aspectRatio: 1,
         },
-        audio: true,
       };
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
 
