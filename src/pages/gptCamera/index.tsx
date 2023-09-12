@@ -42,11 +42,12 @@ const VideoPlayer: NextPageWithLayout = () => {
 
       const scanQRCode = async () => {
         if (videoSource) {
+          console.log(videoSource, videoSource.id);
           try {
             await html5QrCode.start(
               { deviceId: videoSource.id },
               // videoElement,
-              { fps: 1, qrbox: { width: 200, height: 100 } },
+              { fps: 4, qrbox: { width: 200, height: 100 } },
               (text, result) => {
                 setIsScanning(true);
                 console.log(text);

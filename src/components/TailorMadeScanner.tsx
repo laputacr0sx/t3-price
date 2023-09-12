@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
-import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
+import {
+  Html5Qrcode,
+  Html5QrcodeScannerState,
+  Html5QrcodeSupportedFormats,
+} from "html5-qrcode";
 import { demoEANID } from "../utils/helper";
 
 import { api } from "~/utils/api";
@@ -10,6 +14,7 @@ function TailorMadeScanner({ stream }: { stream: MediaStream }) {
   const { id: streamId } = videoTarget;
   const [scannedEAN, setScannedEAN] = useState<string | null>(null);
   const [isScannerPaused, setIsScannerPaused] = useState(false);
+  const [scannerState, setScannerState] = useState<Html5QrcodeScannerState>();
 
   const { data: product, error: productError } = api.demo.getDesired.useQuery(
     {
@@ -26,11 +31,13 @@ function TailorMadeScanner({ stream }: { stream: MediaStream }) {
       formatsToSupport: [Html5QrcodeSupportedFormats.EAN_13],
     });
 
+    setScannerState(myEANScanner.getState());
+
     if (!isScannerPaused) {
       myEANScanner
         .start(
           {
-            deviceId: streamId,
+            facingMode: "environment",
           },
           {
             fps: 10, // Optional, frame per seconds for qr code scanning
@@ -40,6 +47,7 @@ function TailorMadeScanner({ stream }: { stream: MediaStream }) {
           (decodedText, decodedResult) => {
             console.log(JSON.stringify(decodedResult, null, 2));
             setScannedEAN(decodedText);
+
             myEANScanner.stop().catch((e) => console.error(e));
             setIsScannerPaused(true);
           },
@@ -52,12 +60,31 @@ function TailorMadeScanner({ stream }: { stream: MediaStream }) {
         });
     }
 
+    // return () => {
+    //   if (myEANScanner.isScanning) {
+    //     const cleaningUp = async () => {
+    //       try {
+    //         const stopScanning = await myEANScanner.stop();
+    //         stopScanning;
+    //       } catch (error) {
+    //         throw new Error("Error in cleaning up React-life-cycle", {
+    //           cause: error,
+    //         });
+    //       }
+    //     };
+    //     void cleaningUp();
+    //   }
+    // };
+
     return () => {
-      if (myEANScanner.isScanning) {
-        myEANScanner.stop().catch(() => {
-          throw new Error("Error in stopping scanner");
-        });
-      }
+      // myEANScanner.stop().catch((e) => console.error(e));
+      // try {
+      //   myEANScanner.clear();
+      // } catch (e) {
+      //   throw new Error("Error in cleaning up React-life-cycle", {
+      //     cause: e,
+      //   });
+      // }
     };
   }, [isScannerPaused, stream]);
 
@@ -72,6 +99,7 @@ function TailorMadeScanner({ stream }: { stream: MediaStream }) {
         <h2 className="self-center align-middle">
           {isScannerPaused ? "Scan paused" : "Awaiting valid barcodes"}
         </h2>
+        <h3>{scannerState}</h3>
         <button
           disabled={!isScannerPaused}
           onClick={() => {

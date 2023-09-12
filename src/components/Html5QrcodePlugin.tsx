@@ -10,7 +10,6 @@ import {
 import { type Html5QrcodeScannerConfig } from "html5-qrcode/esm/html5-qrcode-scanner";
 
 import { useEffect } from "react";
-import useWindowDimension from "~/hooks/useWindowDimensions";
 
 const scannerRegionId = "html5qr-code-full-region";
 
@@ -49,8 +48,8 @@ const Html5QrcodePlugin = (
       ...props,
       aspectRatio: 1,
       qrbox: {
-        width: width * 0.8,
-        height: width * 0.2667,
+        width: width * 0.9,
+        height: width * 0.39,
       },
     });
     const verbose = props.verbose === true;
