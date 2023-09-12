@@ -64,9 +64,21 @@ const MyScanner: NextPageWithLayout = () => {
 
   return (
     <div className="flex-col items-center justify-center">
-      <div className="flex-col items-center justify-center gap-1">
-        {renderVideoSourceOptions()}
+      <div className="flex items-center justify-center gap-1">
+        {videoDevices.length > 0
+          ? videoDevices.map(({ deviceId, label }, index) => (
+              <button
+                key={deviceId}
+                onClick={() => void handleVideoSourceChange(deviceId)}
+                className="mb-1 mt-1 break-all border-2 px-1"
+              >
+                Device {index + 1} : {label}
+                {deviceId}
+              </button>
+            ))
+          : null}
       </div>
+
       <div className="flex-col items-center justify-center">
         {isLoading && <div className="loading-spinner"></div>}
         {/* {videoSource ? <TailorMadeScanner stream={videoSource} /> : null} */}
