@@ -52,7 +52,7 @@ const MyScanner: NextPageWithLayout = () => {
         <button
           key={deviceId}
           onClick={() => void handleVideoSourceChange(deviceId)}
-          className="mb-1 mt-1 border-2 px-1"
+          className="mb-1 mt-1 break-words border-2 px-1"
         >
           Device {index + 1} : {label}
           {deviceId}
@@ -64,7 +64,7 @@ const MyScanner: NextPageWithLayout = () => {
 
   return (
     <div className="flex-col items-center justify-center">
-      <div className="flex items-center justify-center gap-1">
+      <div className="flex-col items-center justify-center gap-1">
         {renderVideoSourceOptions()}
       </div>
       <div className="flex-col items-center justify-center">
