@@ -12,6 +12,7 @@ const MyScanner: NextPageWithLayout = () => {
   useEffect(() => {
     const getVideoDevices = async () => {
       try {
+        await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
         const devices = await navigator.mediaDevices.enumerateDevices();
         const streams = devices.filter((device) => {
           return device.kind === "videoinput";
