@@ -13,8 +13,10 @@ const MyScanner: NextPageWithLayout = () => {
     const getVideoDevices = async () => {
       try {
         const devices = await navigator.mediaDevices.getUserMedia({
-          video: true,
-          audio: true,
+          video: {
+            facingMode: "environment",
+            aspectRatio: 1.334,
+          },
         });
 
         const streams = devices.getVideoTracks();
@@ -72,6 +74,9 @@ const MyScanner: NextPageWithLayout = () => {
 
   return (
     <div className="flex-col items-center justify-center">
+      <button className="text-ellipsis text-center align-middle">
+        Request User Camera Permission
+      </button>
       <div className="flex items-center justify-center">
         {renderVideoSourceOptions()}
       </div>

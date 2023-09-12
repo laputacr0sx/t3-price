@@ -5,8 +5,6 @@ import { demoEANID } from "../utils/helper";
 import { api } from "~/utils/api";
 
 function TailorMadeScanner({ stream }: { stream: MediaStream }) {
-  console.log(stream);
-
   const { id: streamId } = stream;
 
   const [scannedEAN, setScannedEAN] = useState<string | null>(null);
