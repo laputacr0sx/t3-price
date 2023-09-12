@@ -105,12 +105,13 @@ const VideoPlayer: NextPageWithLayout = () => {
 
   const renderVideoSourceOptions = () => {
     if (videoDevices.length > 0) {
-      return videoDevices.map(({ deviceId, label }) => (
+      return videoDevices.map(({ deviceId, label }, index) => (
         <button
           key={deviceId}
           onClick={() => void handleVideoSourceChange(deviceId)}
+          className="mb-1 mt-1 border-2 px-1"
         >
-          {label}
+          Device {index + 1} : {label}
         </button>
       ));
     }

@@ -13,23 +13,9 @@ const MyScanner: NextPageWithLayout = () => {
     const getVideoDevices = async () => {
       try {
         const devices = await navigator.mediaDevices.getUserMedia({
-          video: {
-            facingMode: "environment",
-            aspectRatio: 1.334,
-          },
+          video: true,
         });
-
         const streams = devices.getVideoTracks();
-
-        // const videoInputDevices = devices.filter((device) => {
-        //   console.log(JSON.stringify(device, null, 2));
-        //   return device.kind === "videoinput";
-        // });
-
-        // const videoInputDevices = streams.filter((stream) => {
-        //   return stream.kind === "video";
-        // });
-
         setVideoDevices(streams);
       } catch (error) {
         console.error("Error accessing media devices during render:", error);
@@ -42,20 +28,19 @@ const MyScanner: NextPageWithLayout = () => {
   const handleVideoSourceChange = async (deviceId: string) => {
     try {
       setIsLoading(true);
-      const constraints: MediaStreamConstraints = {
+      const constraints = {
         video: {
-          deviceId: deviceId,
-          aspectRatio: 1.334,
+          deviceId: { ideal: deviceId },
+          aspectRatio: 2.3335,
         },
+        audio: true,
       };
-      const mediaStream = await navigator.mediaDevices.getUserMedia(
-        constraints
-      );
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
 
-      setVideoSource(mediaStream);
+      setVideoSource(stream);
       setIsLoading(false);
     } catch (error) {
-      console.error("Error accessing media devices during event:", error);
+      console.error("Error accessing media devices:", error);
       setIsLoading(false);
     }
   };
