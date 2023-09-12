@@ -77,9 +77,9 @@ function TailorMadeScanner({ stream }: { stream: MediaStream }) {
             setIsScannerPaused(false);
             setScannedEAN(null);
           }}
-          className="rounded-md border-2 border-solid border-slate-200 px-2 py-1"
+          className="rounded-md border-2 border-solid border-slate-200 px-2 py-1 text-slate-200 disabled:border-green-800 disabled:text-green-800 "
         >
-          Toggle
+          {isScannerPaused ? "Scan Again" : "Scanning"}
         </button>
       </div>
       <h1 key={scannedEAN}>{scannedEAN ?? `This is my scanner`}</h1>
