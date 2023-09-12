@@ -5,7 +5,9 @@ import { demoEANID } from "../utils/helper";
 import { api } from "~/utils/api";
 
 function TailorMadeScanner({ stream }: { stream: MediaStream }) {
-  const { id: deviceId } = stream;
+  console.log(stream);
+
+  const { id: streamId } = stream;
 
   const [scannedEAN, setScannedEAN] = useState<string | null>(null);
   const [isScannerPaused, setIsScannerPaused] = useState(false);
@@ -29,10 +31,10 @@ function TailorMadeScanner({ stream }: { stream: MediaStream }) {
       myEANScanner
         .start(
           {
-            deviceId,
+            deviceId: streamId,
           },
           {
-            fps: 4, // Optional, frame per seconds for qr code scanning
+            fps: 10, // Optional, frame per seconds for qr code scanning
             qrbox: { width: windowWidth * 0.9, height: windowWidth * 0.39 },
           },
           (decodedText, decodedResult) => {
@@ -57,7 +59,7 @@ function TailorMadeScanner({ stream }: { stream: MediaStream }) {
         });
       }
     };
-  }, [isScannerPaused, deviceId]);
+  }, [isScannerPaused, streamId]);
 
   if (productError)
     <>

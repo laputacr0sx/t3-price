@@ -13,9 +13,8 @@ const MyScanner: NextPageWithLayout = () => {
     const getVideoDevices = async () => {
       try {
         const devices = await navigator.mediaDevices.getUserMedia({
-          video: {
-            aspectRatio: 2.3335,
-          },
+          video: true,
+          audio: true,
         });
 
         const streams = devices.getVideoTracks();
@@ -31,7 +30,7 @@ const MyScanner: NextPageWithLayout = () => {
 
         setVideoDevices(streams);
       } catch (error) {
-        console.error("Error accessing media devices:", error);
+        console.error("Error accessing media devices during render:", error);
       }
     };
 
@@ -44,15 +43,18 @@ const MyScanner: NextPageWithLayout = () => {
       const constraints: MediaStreamConstraints = {
         video: {
           deviceId: deviceId,
-          aspectRatio: 2.3335,
+          aspectRatio: 1,
         },
+        audio: true,
       };
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      const mediaStream = await navigator.mediaDevices.getUserMedia(
+        constraints
+      );
 
-      setVideoSource(stream);
+      setVideoSource(mediaStream);
       setIsLoading(false);
     } catch (error) {
-      console.error("Error accessing media devices:", error);
+      console.error("Error accessing media devices during event:", error);
       setIsLoading(false);
     }
   };
