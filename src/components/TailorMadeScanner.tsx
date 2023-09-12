@@ -34,7 +34,7 @@ function TailorMadeScanner({ stream }: { stream: MediaStream }) {
           {
             fps: 10, // Optional, frame per seconds for qr code scanning
             qrbox: { width: windowWidth * 0.9, height: windowWidth * 0.39 },
-            aspectRatio: 2.3335,
+            aspectRatio: 1,
           },
           (decodedText, decodedResult) => {
             console.log(JSON.stringify(decodedResult, null, 2));

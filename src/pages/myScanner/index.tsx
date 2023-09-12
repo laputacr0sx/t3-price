@@ -31,7 +31,7 @@ const MyScanner: NextPageWithLayout = () => {
       const constraints = {
         video: {
           deviceId: { ideal: deviceId },
-          aspectRatio: 2.3335,
+          aspectRatio: 1,
         },
         audio: true,
       };
