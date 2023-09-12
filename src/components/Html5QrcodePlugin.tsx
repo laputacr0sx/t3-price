@@ -41,8 +41,6 @@ type ScannerProp = {
 const Html5QrcodePlugin = (
   props: Html5QrcodeFullConfig & ScannerProp & Html5QrcodeScannerConfig
 ) => {
-  const dimension = useWindowDimension();
-
   useEffect(() => {
     const width = window.innerWidth;
 
