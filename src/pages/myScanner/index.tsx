@@ -17,7 +17,7 @@ const MyScanner: NextPageWithLayout = () => {
         const streams = devices.filter((device) => {
           return device.kind === "videoinput";
         });
-        console.log(streams);
+
         setVideoDevices(streams);
       } catch (error) {
         console.error("Error accessing media devices during render:", error);
@@ -38,6 +38,11 @@ const MyScanner: NextPageWithLayout = () => {
       };
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
 
+      console.log(stream);
+
+      // const mediaStreamTrack = stream.getVideoTracks();
+
+      // setVideoSource(mediaStreamTrack[0] ? mediaStreamTrack[0] : null);
       setVideoSource(stream);
       setIsLoading(false);
     } catch (error) {
@@ -73,7 +78,7 @@ const MyScanner: NextPageWithLayout = () => {
                 className="mb-1 mt-1 break-all border-2 px-1"
               >
                 Device {index + 1} : {label}
-                {/* {deviceId} */}
+                {deviceId}
               </button>
             ))
           : null}

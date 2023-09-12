@@ -5,7 +5,9 @@ import { demoEANID } from "../utils/helper";
 import { api } from "~/utils/api";
 
 function TailorMadeScanner({ stream }: { stream: MediaStream }) {
-  const { id: streamId } = stream;
+  const videoTarget = stream.getVideoTracks()[0]!;
+
+  const { id: streamId } = videoTarget;
   const [scannedEAN, setScannedEAN] = useState<string | null>(null);
   const [isScannerPaused, setIsScannerPaused] = useState(false);
 
@@ -81,8 +83,8 @@ function TailorMadeScanner({ stream }: { stream: MediaStream }) {
           {isScannerPaused ? "Scan Again" : "Scanning"}
         </button>
       </div>
-      <h1 key={scannedEAN}>{scannedEAN ?? `This is my scanner`}</h1>
-      <div id="scanner" className="w-screen resize-none" autoFocus />
+      <h1 key={scannedEAN}>{scannedEAN ?? `This is my scanner ${streamId}`}</h1>
+      <div id="scanner" className="w-screen resize-none" />
       <div id="capturedImage" />
       {product ? (
         <div>
