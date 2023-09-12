@@ -32,7 +32,7 @@ const MyScanner: NextPageWithLayout = () => {
       setIsLoading(true);
       const constraints = {
         video: {
-          deviceId: { ideal: deviceId },
+          deviceId: { exact: deviceId },
           aspectRatio: 1,
         },
       };
@@ -73,7 +73,7 @@ const MyScanner: NextPageWithLayout = () => {
                 className="mb-1 mt-1 break-all border-2 px-1"
               >
                 Device {index + 1} : {label}
-                {deviceId}
+                {/* {deviceId} */}
               </button>
             ))
           : null}
@@ -81,7 +81,7 @@ const MyScanner: NextPageWithLayout = () => {
 
       <div className="flex-col items-center justify-center">
         {isLoading && <div className="loading-spinner"></div>}
-        {/* {videoSource ? <TailorMadeScanner stream={videoSource} /> : null} */}
+        {videoSource ? <TailorMadeScanner stream={videoSource} /> : null}
       </div>
     </div>
   );
