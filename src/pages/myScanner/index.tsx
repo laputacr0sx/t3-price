@@ -78,7 +78,6 @@ const MyScanner: NextPageWithLayout = () => {
                 className="mb-1 mt-1 break-all border-2 px-1"
               >
                 Device {index + 1} : {label}
-                {deviceId}
               </button>
             ))
           : null}
