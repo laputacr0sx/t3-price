@@ -14,6 +14,9 @@ import { type NextPageWithLayout } from "../_app";
 import Layout from "~/layouts/productDetailLayout";
 
 const BarcodeScanner: NextPageWithLayout = () => {
+  const [scannedEAN, setScannedEAN] = useState<string | null>(null);
+  const [isScannerPaused, setIsScannerPaused] = useState(false);
+  const [scannerState, setScannerState] = useState<Html5QrcodeScannerState>();
   const [cameras, setCameras] = useState<CameraDevice[]>([]);
   const [cameraInUse, setCameraInUse] = useState<MediaStream | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -39,7 +42,7 @@ const BarcodeScanner: NextPageWithLayout = () => {
       formatsToSupport: [Html5QrcodeSupportedFormats.EAN_13],
     });
 
-    if (cameraInUse) {
+    if (typeof cameraInUse?.id === "string") {
       try {
         void eanScanner.start(
           { deviceId: cameraInUse?.id },
@@ -72,7 +75,7 @@ const BarcodeScanner: NextPageWithLayout = () => {
       setIsLoading(true);
       const constraints = {
         video: {
-          deviceId: { ideal: deviceId },
+          deviceId: { exact: deviceId },
           aspectRatio: 1,
         },
         audio: true,
@@ -88,6 +91,22 @@ const BarcodeScanner: NextPageWithLayout = () => {
   };
   return (
     <div>
+      <div className="flex justify-between bg-slate-900 px-4 py-1">
+        <h2 className="self-center align-middle">
+          {isScannerPaused ? "Scan paused" : "Awaiting valid barcodes"}
+        </h2>
+        <h3>{scannerState}</h3>
+        <button
+          disabled={!isScannerPaused}
+          onClick={() => {
+            setIsScannerPaused(false);
+            setScannedEAN(null);
+          }}
+          className="rounded-md border-2 border-solid border-slate-200 px-2 py-1 text-slate-200 disabled:border-green-800 disabled:text-green-800 "
+        >
+          {isScannerPaused ? "Scan Again" : "Scanning"}
+        </button>
+      </div>
       <div className="flex-col items-center justify-center gap-1">
         {cameras.length > 0
           ? cameras.map(({ id, label }, index) => (
@@ -97,11 +116,15 @@ const BarcodeScanner: NextPageWithLayout = () => {
                 className="mb-1 mt-1 break-all border-2 px-1"
               >
                 Device {index + 1} : {label}
+                {id}
               </button>
             ))
           : null}
       </div>
       <div id="scanner-region" className="w-screen resize-none" />
+      <h1 key={scannedEAN}>
+        {scannedEAN ?? `This is my scanner ${cameraInUse?.id}`}
+      </h1>
     </div>
   );
 };
