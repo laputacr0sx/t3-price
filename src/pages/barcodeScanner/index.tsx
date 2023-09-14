@@ -1,13 +1,8 @@
-import React, {
-  type ReactElement,
-  useEffect,
-  useState,
-  startTransition,
-} from "react";
+import React, { type ReactElement, useEffect, useState } from "react";
 import {
   type CameraDevice,
   Html5Qrcode,
-  Html5QrcodeScannerState,
+  type Html5QrcodeScannerState,
   Html5QrcodeSupportedFormats,
 } from "html5-qrcode";
 import { type NextPageWithLayout } from "../_app";
@@ -73,6 +68,7 @@ const BarcodeScanner: NextPageWithLayout = () => {
   const handleVideoSourceChange = async (deviceId: string) => {
     try {
       setIsLoading(true);
+
       const constraints = {
         video: {
           deviceId: { exact: deviceId },
@@ -116,7 +112,6 @@ const BarcodeScanner: NextPageWithLayout = () => {
                 className="mb-1 mt-1 break-all border-2 px-1"
               >
                 Device {index + 1} : {label}
-                {id}
               </button>
             ))
           : null}
