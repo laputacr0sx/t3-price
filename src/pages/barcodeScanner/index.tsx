@@ -27,13 +27,14 @@ const BarcodeScanner: NextPageWithLayout = () => {
 
   useEffect(() => {
     const obtainCameras = async () => {
-      const cameras = await Html5Qrcode.getCameras();
-      if (cameras.length > 0) {
-        cameras.forEach((camera) => {
+      const gotCameras = await Html5Qrcode.getCameras();
+      if (gotCameras.length > 0) {
+        gotCameras.forEach((camera) => {
           setCameras([...cameras, camera]);
         });
       }
     };
+
     void obtainCameras();
   }, []);
 
