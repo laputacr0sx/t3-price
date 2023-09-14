@@ -7,6 +7,8 @@ import {
 } from "html5-qrcode";
 import { type NextPageWithLayout } from "../_app";
 import Layout from "~/layouts/productDetailLayout";
+import { api } from "~/utils/api";
+import { demoEANID } from "~/utils/helper";
 
 const BarcodeScanner: NextPageWithLayout = () => {
   const [scannedEAN, setScannedEAN] = useState<string | null>(null);
@@ -15,6 +17,13 @@ const BarcodeScanner: NextPageWithLayout = () => {
   const [cameras, setCameras] = useState<CameraDevice[]>([]);
   const [cameraInUse, setCameraInUse] = useState<MediaStream | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  const { data: product, error: productError } = api.demo.getDesired.useQuery(
+    {
+      id: demoEANID(scannedEAN ?? ""),
+    },
+    { refetchOnWindowFocus: false }
+  );
 
   useEffect(() => {
     const obtainCameras = async () => {
@@ -46,11 +55,19 @@ const BarcodeScanner: NextPageWithLayout = () => {
             aspectRatio: 1,
             qrbox: { width: windowWidth * 0.9, height: windowWidth * 0.39 },
           },
-          (text, result) => {
-            console.log(text);
+          (decodedText, decodedResult) => {
+            setScannerState(eanScanner.getState());
+
+            console.log(JSON.stringify(decodedResult, null, 2));
+            setScannedEAN(decodedText);
+
+            eanScanner.stop().catch((e) => console.error(e));
+            setIsScannerPaused(true);
           },
           (message, error) => {
+            setScannerState(eanScanner.getState());
             if (error instanceof Error) {
+              console.error(message);
               throw error;
             }
           }
@@ -103,7 +120,7 @@ const BarcodeScanner: NextPageWithLayout = () => {
           {isScannerPaused ? "Scan Again" : "Scanning"}
         </button>
       </div>
-      <div className="flex-col items-center justify-center gap-1">
+      <div className="flex-row items-center justify-center gap-1 ">
         {cameras.length > 0
           ? cameras.map(({ id, label }, index) => (
               <button
@@ -116,10 +133,20 @@ const BarcodeScanner: NextPageWithLayout = () => {
             ))
           : null}
       </div>
-      <div id="scanner-region" className="w-screen resize-none" />
       <h1 key={scannedEAN}>
         {scannedEAN ?? `This is my scanner ${cameraInUse?.id}`}
       </h1>
+      <div
+        key={cameraInUse?.id}
+        id="scanner-region"
+        className="w-screen resize-none"
+      />
+      {product ? (
+        <div>
+          <h3>{product.title}</h3>
+          <p className="break-words text-xs font-thin">{product.description}</p>
+        </div>
+      ) : null}
     </div>
   );
 };

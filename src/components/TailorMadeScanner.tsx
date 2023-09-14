@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   Html5Qrcode,
-  Html5QrcodeScannerState,
+  type Html5QrcodeScannerState,
   Html5QrcodeSupportedFormats,
 } from "html5-qrcode";
 import { demoEANID } from "../utils/helper";
