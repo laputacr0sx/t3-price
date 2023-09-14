@@ -9,14 +9,17 @@ import { type NextPageWithLayout } from "../_app";
 import Layout from "~/layouts/productDetailLayout";
 import { api } from "~/utils/api";
 import { demoEANID } from "~/utils/helper";
+import { type DemoProduct } from "~/server/api/routers/demoController";
 
 const BarcodeScanner: NextPageWithLayout = () => {
-  const [scannedEAN, setScannedEAN] = useState<string | null>(null);
   const [isScannerPaused, setIsScannerPaused] = useState(false);
   const [scannerState, setScannerState] = useState<Html5QrcodeScannerState>();
-  const [cameras, setCameras] = useState<CameraDevice[]>([]);
+
+  const [camerasAvailable, setCamerasAvailable] = useState<CameraDevice[]>([]);
   const [cameraInUse, setCameraInUse] = useState<MediaStream | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  const [scannedEAN, setScannedEAN] = useState<string | null>(null);
 
   const { data: product, error: productError } = api.demo.getDesired.useQuery(
     {
@@ -29,9 +32,26 @@ const BarcodeScanner: NextPageWithLayout = () => {
     const obtainCameras = async () => {
       const gotCameras = await Html5Qrcode.getCameras();
       if (gotCameras.length > 0) {
-        gotCameras.forEach((camera) => {
-          setCameras([...cameras, camera]);
-        });
+        setCamerasAvailable([...camerasAvailable, ...gotCameras]);
+
+        // console.log(...gotCameras);
+
+        // const validCamera = gotCameras.filter(
+        //   (gotCamera) => gotCamera.label === "FaceTime HD Camera"
+        // );
+
+        // function checkDuplicateCameras(id: string): CameraDevice {
+        //   return { id: "string", label: "string" };
+        // }
+
+        // gotCameras.forEach((gotComera) => {
+        //   setCamerasAvailable([
+        //     ...camerasAvailable,
+        //     ...camerasAvailable.filter((cameraAvailable) =>
+        //       console.log(cameraAvailable.id !== gotComera.id)
+        //     ),
+        //   ]);
+        // });
       }
     };
 
@@ -127,8 +147,8 @@ const BarcodeScanner: NextPageWithLayout = () => {
         </button>
       </div>
       <div className="flex-row items-center justify-center gap-1 ">
-        {cameras.length > 0
-          ? cameras.map(({ id, label }, index) => (
+        {camerasAvailable.length > 0
+          ? camerasAvailable.map(({ id, label }, index) => (
               <button
                 key={id + index}
                 onClick={() => void handleVideoSourceChange(id)}
@@ -148,15 +168,39 @@ const BarcodeScanner: NextPageWithLayout = () => {
         id="scanner-region"
         className="w-screen resize-none"
       />
-      {product ? (
-        <div>
-          <h3>{product.title}</h3>
-          <p className="break-words text-xs font-thin">{product.description}</p>
-        </div>
-      ) : null}
+      {product ? <ProductPlainText product={product} /> : null}
     </div>
   );
 };
+
+type ProductPlainTextProps = {
+  product: DemoProduct;
+};
+
+function ProductPlainText({ product }: ProductPlainTextProps) {
+  const {
+    id,
+    title,
+    description,
+    price,
+    discountPercentage,
+    rating,
+    stock,
+    brand,
+    category,
+    thumbnail,
+    images,
+  } = product;
+
+  return (
+    <div>
+      <h1>{title}</h1>
+      <h2>{brand}</h2>
+      <p>USD${price}</p>
+      <p className="break-words text-xs font-thin">{description}</p>
+    </div>
+  );
+}
 
 BarcodeScanner.getLayout = function getLayout(page: ReactElement) {
   return <Layout>{page}</Layout>;
