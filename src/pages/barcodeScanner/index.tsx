@@ -103,6 +103,11 @@ const BarcodeScanner: NextPageWithLayout = () => {
       setIsLoading(false);
     }
   };
+
+  if (productError) {
+    return <h1>Error occured during fetching</h1>;
+  }
+
   return (
     <div>
       <div className="flex justify-between bg-slate-900 px-4 py-1">
@@ -137,6 +142,7 @@ const BarcodeScanner: NextPageWithLayout = () => {
       <h1 key={scannedEAN}>
         {scannedEAN ?? `This is my scanner ${cameraInUse?.id}`}
       </h1>
+      {isLoading && <div className="loading-spinner"></div>}
       <div
         key={cameraInUse?.id}
         id="scanner-region"
