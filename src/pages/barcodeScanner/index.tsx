@@ -31,6 +31,7 @@ const BarcodeScanner: NextPageWithLayout = () => {
   useEffect(() => {
     const obtainCameras = async () => {
       const gotCameras = await Html5Qrcode.getCameras();
+
       if (gotCameras.length > 0) {
         const labelOfCamerasAvailable = camerasAvailable.map(
           ({ label }) => label
@@ -57,13 +58,17 @@ const BarcodeScanner: NextPageWithLayout = () => {
       useBarCodeDetectorIfSupported: true,
     });
 
+    if (eanScanner.isScanning) {
+      eanScanner.resume();
+    }
+
     if (cameraInUse)
       try {
         void eanScanner.start(
           { deviceId: { exact: cameraInUse } },
           {
             fps: 8,
-            aspectRatio: 1.7778,
+            aspectRatio: 1,
             qrbox: {
               width: windowWidth * 0.9,
               height: windowWidth * 0.39,
@@ -75,7 +80,7 @@ const BarcodeScanner: NextPageWithLayout = () => {
             setScannedEAN(decodedText);
             setProductLoaded(true);
             // setCameraInUse(null);
-
+            eanScanner.pause();
             // eanScanner.stop().catch((e) => console.error(e));
           },
           (message, error) => {
