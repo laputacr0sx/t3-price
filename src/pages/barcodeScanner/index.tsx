@@ -18,7 +18,6 @@ const BarcodeScanner: NextPageWithLayout = () => {
 
   const [camerasAvailable, setCamerasAvailable] = useState<CameraDevice[]>([]);
   const [cameraInUse, setCameraInUse] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
 
   const [scannedEAN, setScannedEAN] = useState<string | null>(null);
 
@@ -95,7 +94,7 @@ const BarcodeScanner: NextPageWithLayout = () => {
     return () => {
       //
     };
-  }, [cameraInUse]);
+  }, [cameraInUse, productLoaded]);
 
   if (productError) {
     return <h1>Error occurred during fetching</h1>;
@@ -109,12 +108,13 @@ const BarcodeScanner: NextPageWithLayout = () => {
         </h2>
         <h3>{scannerState}</h3>
         <button
+          className="rounded-md border-2 border-solid border-slate-200 px-2 py-1 text-slate-200 disabled:border-green-800 disabled:text-green-800 "
           disabled={!productLoaded}
           onClick={() => {
             setProductLoaded(false);
             setScannedEAN(null);
+            setCameraInUse(null);
           }}
-          className="rounded-md border-2 border-solid border-slate-200 px-2 py-1 text-slate-200 disabled:border-green-800 disabled:text-green-800 "
         >
           {productLoaded ? "Scan Again" : "Scanning"}
         </button>
@@ -135,7 +135,7 @@ const BarcodeScanner: NextPageWithLayout = () => {
       <h1 key={scannedEAN}>
         {scannedEAN && `This is my scanner ${cameraInUse}`}
       </h1>
-      {isLoading && <div className="loading-spinner"></div>}
+
       <div id="scanner-region" className="w-screen resize-none" />
       {product && productLoaded ? <ProductPlainText product={product} /> : null}
     </div>
