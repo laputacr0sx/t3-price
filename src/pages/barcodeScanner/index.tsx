@@ -72,12 +72,11 @@ const BarcodeScanner: NextPageWithLayout = () => {
           },
           (decodedText, decodedResult) => {
             setScannerState(eanScanner.getState());
-
-            console.log(JSON.stringify(decodedResult, null, 2));
             setScannedEAN(decodedText);
+            setProductLoaded(true);
+            setCameraInUse(null);
 
             eanScanner.stop().catch((e) => console.error(e));
-            setProductLoaded(true);
           },
           (message, error) => {
             setScannerState(eanScanner.getState());
