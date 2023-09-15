@@ -97,29 +97,6 @@ const BarcodeScanner: NextPageWithLayout = () => {
     };
   }, [cameraInUse]);
 
-  // const handleVideoSourceChange = async (deviceId: string) => {
-  //   try {
-  //     setIsLoading(true);
-
-  //     const constraints = {
-  //       video: {
-  //         deviceId: { exact: deviceId },
-  //         aspectRatio: 1,
-  //       },
-  //       // audio: true,
-  //     };
-  //     const stream = await navigator.mediaDevices.getUserMedia(constraints);
-
-  //     console.log(stream.getVideoTracks());
-
-  //     setCameraInUse(stream);
-  //     setIsLoading(false);
-  //   } catch (error) {
-  //     console.error("Error accessing media devices:", error);
-  //     setIsLoading(false);
-  //   }
-  // };
-
   if (productError) {
     return <h1>Error occurred during fetching</h1>;
   }
@@ -159,11 +136,7 @@ const BarcodeScanner: NextPageWithLayout = () => {
         {scannedEAN && `This is my scanner ${cameraInUse}`}
       </h1>
       {isLoading && <div className="loading-spinner"></div>}
-      <div
-        key={cameraInUse}
-        id="scanner-region"
-        className="w-screen resize-none"
-      />
+      <div id="scanner-region" className="w-screen resize-none" />
       {product /*&& productLoaded*/ ? (
         <ProductPlainText product={product} />
       ) : null}
