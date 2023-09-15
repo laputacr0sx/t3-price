@@ -17,7 +17,7 @@ const BarcodeScanner: NextPageWithLayout = () => {
   const [scannerState, setScannerState] = useState<Html5QrcodeScannerState>();
 
   const [camerasAvailable, setCamerasAvailable] = useState<CameraDevice[]>([]);
-  const [cameraInUse, setCameraInUse] = useState<MediaStream | null>(null);
+  const [cameraInUse, setCameraInUse] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const [scannedEAN, setScannedEAN] = useState<string | null>(null);
@@ -58,64 +58,67 @@ const BarcodeScanner: NextPageWithLayout = () => {
       useBarCodeDetectorIfSupported: true,
     });
 
-    try {
-      void eanScanner.start(
-        { deviceId: { exact: cameraInUse?.id } },
-        {
-          fps: 4,
-          aspectRatio: 1,
-          qrbox: {
-            width: windowWidth * 0.9,
-            height: windowWidth * 0.39,
+    if (cameraInUse)
+      try {
+        void eanScanner.start(
+          { deviceId: { exact: cameraInUse } },
+          {
+            fps: 4,
+            aspectRatio: 1,
+            qrbox: {
+              width: windowWidth * 0.9,
+              height: windowWidth * 0.39,
+            },
+            disableFlip: false,
           },
-          disableFlip: false,
-        },
-        (decodedText, decodedResult) => {
-          setScannerState(eanScanner.getState());
+          (decodedText, decodedResult) => {
+            setScannerState(eanScanner.getState());
 
-          console.log(JSON.stringify(decodedResult, null, 2));
-          setScannedEAN(decodedText);
+            console.log(JSON.stringify(decodedResult, null, 2));
+            setScannedEAN(decodedText);
 
-          eanScanner.stop().catch((e) => console.error(e));
-          setProductLoaded(true);
-        },
-        (message, error) => {
-          setScannerState(eanScanner.getState());
-          if (error instanceof Error) {
-            console.error(message);
-            throw error;
+            eanScanner.stop().catch((e) => console.error(e));
+            setProductLoaded(true);
+          },
+          (message, error) => {
+            setScannerState(eanScanner.getState());
+            if (error instanceof Error) {
+              console.error(message);
+              throw error;
+            }
           }
-        }
-      );
-    } catch (error) {
-      console.error(error);
-    }
+        );
+      } catch (error) {
+        console.error(error);
+      }
 
     return () => {
       //
     };
   }, [cameraInUse]);
 
-  const handleVideoSourceChange = async (deviceId: string) => {
-    try {
-      setIsLoading(true);
+  // const handleVideoSourceChange = async (deviceId: string) => {
+  //   try {
+  //     setIsLoading(true);
 
-      const constraints = {
-        video: {
-          deviceId: { exact: deviceId },
-          aspectRatio: 1,
-        },
-        audio: true,
-      };
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+  //     const constraints = {
+  //       video: {
+  //         deviceId: { exact: deviceId },
+  //         aspectRatio: 1,
+  //       },
+  //       // audio: true,
+  //     };
+  //     const stream = await navigator.mediaDevices.getUserMedia(constraints);
 
-      setCameraInUse(stream);
-      setIsLoading(false);
-    } catch (error) {
-      console.error("Error accessing media devices:", error);
-      setIsLoading(false);
-    }
-  };
+  //     console.log(stream.getVideoTracks());
+
+  //     setCameraInUse(stream);
+  //     setIsLoading(false);
+  //   } catch (error) {
+  //     console.error("Error accessing media devices:", error);
+  //     setIsLoading(false);
+  //   }
+  // };
 
   if (productError) {
     return <h1>Error occurred during fetching</h1>;
@@ -144,7 +147,7 @@ const BarcodeScanner: NextPageWithLayout = () => {
           ? camerasAvailable.map(({ id, label }, index) => (
               <button
                 key={id + index}
-                onClick={() => void handleVideoSourceChange(id)}
+                onClick={() => void setCameraInUse(id)}
                 className="mb-1 mt-1 break-all border-2 px-1"
               >
                 Device {index + 1} : {label}
@@ -153,11 +156,11 @@ const BarcodeScanner: NextPageWithLayout = () => {
           : null}
       </div>
       <h1 key={scannedEAN}>
-        {scannedEAN && `This is my scanner ${cameraInUse?.id}`}
+        {scannedEAN && `This is my scanner ${cameraInUse}`}
       </h1>
       {isLoading && <div className="loading-spinner"></div>}
       <div
-        key={cameraInUse?.id}
+        key={cameraInUse}
         id="scanner-region"
         className="w-screen resize-none"
       />
