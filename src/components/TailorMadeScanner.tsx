@@ -38,6 +38,7 @@ function TailorMadeScanner({ stream }: { stream: MediaStream }) {
         .start(
           {
             facingMode: "environment",
+              
           },
           {
             fps: 10, // Optional, frame per seconds for qr code scanning

@@ -1,15 +1,31 @@
-import React, { type ReactElement, useEffect, useState } from "react";
 import {
   type CameraDevice,
   Html5Qrcode,
   type Html5QrcodeScannerState,
   Html5QrcodeSupportedFormats,
 } from "html5-qrcode";
-import { type NextPageWithLayout } from "../_app";
-import Layout from "~/layouts/productDetailLayout";
-import { api } from "~/utils/api";
-import { demoEANID } from "~/utils/helper";
-import { type DemoProduct } from "~/server/api/routers/demoController";
+import Image
+  from "next/image";
+import React, {
+  type ReactElement,
+  useEffect,
+  useState
+} from "react";
+import Layout
+  from "~/layouts/productDetailLayout";
+import {
+  type DemoProduct
+} from "~/server/api/routers/demoController";
+import {
+  api
+} from "~/utils/api";
+import {
+  demoEANID,
+  getRandomImage
+} from "~/utils/helper";
+import {
+  type NextPageWithLayout
+} from "../_app";
 
 const BarcodeScanner: NextPageWithLayout = () => {
   const [isScannerPaused, setIsScannerPaused] = useState(false);
@@ -56,7 +72,7 @@ const BarcodeScanner: NextPageWithLayout = () => {
     };
 
     void obtainCameras();
-  }, []);
+  }, [camerasAvailable]);
 
   useEffect(() => {
     const elementId = "scanner-region";
@@ -67,14 +83,17 @@ const BarcodeScanner: NextPageWithLayout = () => {
       formatsToSupport: [Html5QrcodeSupportedFormats.EAN_13],
     });
 
-    if (typeof cameraInUse?.id === "string") {
-      try {
-        void eanScanner.start(
-          { deviceId: cameraInUse?.id },
+    try {
+      void eanScanner.start(
+          {deviceId: cameraInUse?.id},
           {
             fps: 4,
             aspectRatio: 1,
-            qrbox: { width: windowWidth * 0.9, height: windowWidth * 0.39 },
+            qrbox: {
+              width: windowWidth * 0.9,
+              height: windowWidth * 0.39
+            },
+            disableFlip: false,
           },
           (decodedText, decodedResult) => {
             setScannerState(eanScanner.getState());
@@ -92,10 +111,9 @@ const BarcodeScanner: NextPageWithLayout = () => {
               throw error;
             }
           }
-        );
-      } catch (error) {
-        console.error(error);
-      }
+      );
+    } catch (error) {
+      console.error(error);
     }
 
     return () => {
@@ -125,7 +143,10 @@ const BarcodeScanner: NextPageWithLayout = () => {
   };
 
   if (productError) {
-    return <h1>Error occured during fetching</h1>;
+    return <h1>Error
+      occurred
+      during
+      fetching</h1>;
   }
 
   return (
@@ -192,9 +213,20 @@ function ProductPlainText({ product }: ProductPlainTextProps) {
     images,
   } = product;
 
+
   return (
-    <div>
-      <h1>{title}</h1>
+      <div
+          key={id}>
+        <div
+            className={"flex justify-around items-center "}>
+          <h1>{title}</h1>
+          <Image
+              src={getRandomImage(images)}
+              alt={'product Image'}
+              loading="lazy"
+              sizes="10vw"
+              fill/>
+        </div>
       <h2>{brand}</h2>
       <p>USD${price}</p>
       <p className="break-words text-xs font-thin">{description}</p>
