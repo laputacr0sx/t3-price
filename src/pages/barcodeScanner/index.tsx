@@ -13,7 +13,7 @@ import { demoEANID, getRandomImage } from "~/utils/helper";
 import { type NextPageWithLayout } from "../_app";
 
 const BarcodeScanner: NextPageWithLayout = () => {
-  const [isScannerPaused, setIsScannerPaused] = useState(false);
+  const [productLoaded, setProductLoaded] = useState(false);
   const [scannerState, setScannerState] = useState<Html5QrcodeScannerState>();
 
   const [camerasAvailable, setCamerasAvailable] = useState<CameraDevice[]>([]);
@@ -33,31 +33,20 @@ const BarcodeScanner: NextPageWithLayout = () => {
     const obtainCameras = async () => {
       const gotCameras = await Html5Qrcode.getCameras();
       if (gotCameras.length > 0) {
-        setCamerasAvailable([...camerasAvailable, ...gotCameras]);
+        const labelOfCamerasAvailable = camerasAvailable.map(
+          ({ label }) => label
+        );
 
-        // console.log(...gotCameras);
+        const validCameras = gotCameras.filter(
+          ({ label }) => !labelOfCamerasAvailable.includes(label)
+        );
 
-        // const validCamera = gotCameras.filter(
-        //   (gotCamera) => gotCamera.label === "FaceTime HD Camera"
-        // );
-
-        // function checkDuplicateCameras(id: string): CameraDevice {
-        //   return { id: "string", label: "string" };
-        // }
-
-        // gotCameras.forEach((gotComera) => {
-        //   setCamerasAvailable([
-        //     ...camerasAvailable,
-        //     ...camerasAvailable.filter((cameraAvailable) =>
-        //       console.log(cameraAvailable.id !== gotComera.id)
-        //     ),
-        //   ]);
-        // });
+        setCamerasAvailable([...camerasAvailable, ...validCameras]);
       }
     };
 
     void obtainCameras();
-  }, [camerasAvailable]);
+  }, []);
 
   useEffect(() => {
     const elementId = "scanner-region";
@@ -87,7 +76,7 @@ const BarcodeScanner: NextPageWithLayout = () => {
           setScannedEAN(decodedText);
 
           eanScanner.stop().catch((e) => console.error(e));
-          setIsScannerPaused(true);
+          setProductLoaded(true);
         },
         (message, error) => {
           setScannerState(eanScanner.getState());
@@ -135,18 +124,18 @@ const BarcodeScanner: NextPageWithLayout = () => {
     <div>
       <div className="flex justify-between bg-slate-900 px-4 py-1">
         <h2 className="self-center align-middle">
-          {isScannerPaused ? "Scan paused" : "Awaiting valid barcodes"}
+          {productLoaded ? "Scan paused" : "Awaiting valid barcodes"}
         </h2>
         <h3>{scannerState}</h3>
         <button
-          disabled={!isScannerPaused}
+          disabled={!productLoaded}
           onClick={() => {
-            setIsScannerPaused(false);
+            setProductLoaded(false);
             setScannedEAN(null);
           }}
           className="rounded-md border-2 border-solid border-slate-200 px-2 py-1 text-slate-200 disabled:border-green-800 disabled:text-green-800 "
         >
-          {isScannerPaused ? "Scan Again" : "Scanning"}
+          {productLoaded ? "Scan Again" : "Scanning"}
         </button>
       </div>
       <div className="flex-row items-center justify-center gap-1 ">
@@ -163,7 +152,7 @@ const BarcodeScanner: NextPageWithLayout = () => {
           : null}
       </div>
       <h1 key={scannedEAN}>
-        {scannedEAN ?? `This is my scanner ${cameraInUse?.id}`}
+        {scannedEAN && `This is my scanner ${cameraInUse?.id}`}
       </h1>
       {isLoading && <div className="loading-spinner"></div>}
       <div
@@ -171,7 +160,9 @@ const BarcodeScanner: NextPageWithLayout = () => {
         id="scanner-region"
         className="w-screen resize-none"
       />
-      {product ? <ProductPlainText product={product} /> : null}
+      {product /*&& productLoaded*/ ? (
+        <ProductPlainText product={product} />
+      ) : null}
     </div>
   );
 };
@@ -196,19 +187,21 @@ function ProductPlainText({ product }: ProductPlainTextProps) {
   } = product;
 
   return (
-    <div key={id}>
+    <div key={id} className="w-[90%] flex-col items-center justify-center py-5">
       <div className={"flex items-center justify-around "}>
-        <h1>{title}</h1>
-        <Image
-          src={getRandomImage(images)}
-          alt={"product Image"}
-          loading="lazy"
-          sizes="10vw"
-          fill
-        />
+        <h1 className="text-3xl">{title}</h1>
+        <div className="relative h-12 w-12 items-center justify-center align-middle">
+          <Image
+            src={getRandomImage(images)}
+            alt={"product Image"}
+            loading="lazy"
+            sizes="10vw"
+            fill
+          />
+        </div>
       </div>
-      <h2>{brand}</h2>
-      <p>USD${price}</p>
+      <h2>Company: {brand}</h2>
+      <p>Price: USD${price}</p>
       <p className="break-words text-xs font-thin">{description}</p>
     </div>
   );
