@@ -58,7 +58,7 @@ const BarcodeScanner: NextPageWithLayout = () => {
       useBarCodeDetectorIfSupported: true,
     });
 
-    if (cameraInUse)
+    if (cameraInUse && !productLoaded)
       try {
         void eanScanner.start(
           { deviceId: { exact: cameraInUse } },
@@ -135,7 +135,6 @@ const BarcodeScanner: NextPageWithLayout = () => {
       <h1 key={scannedEAN}>
         {scannedEAN && `This is my scanner ${cameraInUse}`}
       </h1>
-
       <div id="scanner-region" className="w-screen resize-none" />
       {product && productLoaded ? <ProductPlainText product={product} /> : null}
     </div>
