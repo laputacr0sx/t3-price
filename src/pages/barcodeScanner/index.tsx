@@ -137,9 +137,7 @@ const BarcodeScanner: NextPageWithLayout = () => {
       </h1>
       {isLoading && <div className="loading-spinner"></div>}
       <div id="scanner-region" className="w-screen resize-none" />
-      {product /*&& productLoaded*/ ? (
-        <ProductPlainText product={product} />
-      ) : null}
+      {product && productLoaded ? <ProductPlainText product={product} /> : null}
     </div>
   );
 };
