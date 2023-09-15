@@ -1,14 +1,8 @@
-import React, { type Dispatch, type SetStateAction } from "react";
-import { type DemoProduct } from "~/server/api/routers/demoController";
+import React from "react";
 import Modal from "react-modal";
 import Image from "next/image";
 import { getRandomImage } from "~/utils/helper";
-
-type ProductModalType = {
-  setIsModalShown: Dispatch<SetStateAction<boolean>>;
-  isModalShown: boolean;
-  currentItem: DemoProduct;
-};
+import { ProductModalType } from "~/types/allTypes";
 
 function ProductModal({
   isModalShown,

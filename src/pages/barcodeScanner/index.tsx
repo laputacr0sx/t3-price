@@ -11,6 +11,7 @@ import { type DemoProduct } from "~/server/api/routers/demoController";
 import { api } from "~/utils/api";
 import { demoEANID, getRandomImage } from "~/utils/helper";
 import { type NextPageWithLayout } from "../_app";
+import ProductPlainText from "~/components/ProductPlainText";
 
 const BarcodeScanner: NextPageWithLayout = () => {
   const [productLoaded, setProductLoaded] = useState(false);
@@ -133,53 +134,15 @@ const BarcodeScanner: NextPageWithLayout = () => {
           : null}
       </div>
       <h1 key={scannedEAN}>
-        {scannedEAN && `This is my scanner ${cameraInUse}`}
+        {scannedEAN && `This is my scanner ${scannedEAN}`}
       </h1>
       <div id="scanner-region" className="w-screen resize-none" />
-      {product && productLoaded ? <ProductPlainText product={product} /> : null}
+      {product /* && productLoaded */ ? (
+        <ProductPlainText product={product} />
+      ) : null}
     </div>
   );
 };
-
-type ProductPlainTextProps = {
-  product: DemoProduct;
-};
-
-function ProductPlainText({ product }: ProductPlainTextProps) {
-  const {
-    id,
-    title,
-    description,
-    price,
-    discountPercentage,
-    rating,
-    stock,
-    brand,
-    category,
-    thumbnail,
-    images,
-  } = product;
-
-  return (
-    <div key={id} className="w-[90%] flex-col items-center justify-center py-5">
-      <div className={"flex items-center justify-around "}>
-        <h1 className="text-3xl">{title}</h1>
-        <div className="relative h-12 w-12 items-center justify-center align-middle">
-          <Image
-            src={getRandomImage(images)}
-            alt={"product Image"}
-            loading="lazy"
-            sizes="10vw"
-            fill
-          />
-        </div>
-      </div>
-      <h2>Company: {brand}</h2>
-      <p>Price: USD${price}</p>
-      <p className="break-words text-xs font-thin">{description}</p>
-    </div>
-  );
-}
 
 BarcodeScanner.getLayout = function getLayout(page: ReactElement) {
   return <Layout>{page}</Layout>;
