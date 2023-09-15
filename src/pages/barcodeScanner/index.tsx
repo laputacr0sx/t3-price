@@ -58,10 +58,6 @@ const BarcodeScanner: NextPageWithLayout = () => {
       useBarCodeDetectorIfSupported: true,
     });
 
-    if (eanScanner.isScanning) {
-      eanScanner.resume();
-    }
-
     if (cameraInUse)
       try {
         void eanScanner.start(
@@ -81,7 +77,7 @@ const BarcodeScanner: NextPageWithLayout = () => {
             setProductLoaded(true);
             // setCameraInUse(null);
             eanScanner.pause();
-            // eanScanner.stop().catch((e) => console.error(e));
+            eanScanner.stop().catch((e) => console.error(e));
           },
           (message, error) => {
             setScannerState(eanScanner.getState());
