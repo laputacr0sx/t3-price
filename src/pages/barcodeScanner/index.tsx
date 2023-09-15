@@ -4,12 +4,10 @@ import {
   type Html5QrcodeScannerState,
   Html5QrcodeSupportedFormats,
 } from "html5-qrcode";
-import Image from "next/image";
 import React, { type ReactElement, useEffect, useState } from "react";
 import Layout from "~/layouts/productDetailLayout";
-import { type DemoProduct } from "~/server/api/routers/demoController";
 import { api } from "~/utils/api";
-import { demoEANID, getRandomImage } from "~/utils/helper";
+import { demoEANID } from "~/utils/helper";
 import { type NextPageWithLayout } from "../_app";
 import ProductPlainText from "~/components/ProductPlainText";
 
@@ -137,9 +135,7 @@ const BarcodeScanner: NextPageWithLayout = () => {
         {scannedEAN && `This is my scanner ${scannedEAN}`}
       </h1>
       <div id="scanner-region" className="w-screen resize-none" />
-      {product /* && productLoaded */ ? (
-        <ProductPlainText product={product} />
-      ) : null}
+      {product && productLoaded ? <ProductPlainText product={product} /> : null}
     </div>
   );
 };
