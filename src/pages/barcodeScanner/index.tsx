@@ -62,8 +62,8 @@ const BarcodeScanner: NextPageWithLayout = () => {
         void eanScanner.start(
           { deviceId: { exact: cameraInUse } },
           {
-            fps: 4,
-            aspectRatio: 1,
+            fps: 8,
+            aspectRatio: 1.7778,
             qrbox: {
               width: windowWidth * 0.9,
               height: windowWidth * 0.39,
