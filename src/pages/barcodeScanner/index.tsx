@@ -55,11 +55,12 @@ const BarcodeScanner: NextPageWithLayout = () => {
     const eanScanner = new Html5Qrcode(elementId, {
       verbose: false,
       formatsToSupport: [Html5QrcodeSupportedFormats.EAN_13],
+      useBarCodeDetectorIfSupported: true,
     });
 
     try {
       void eanScanner.start(
-        { deviceId: cameraInUse?.id },
+        { deviceId: { exact: cameraInUse?.id } },
         {
           fps: 4,
           aspectRatio: 1,
