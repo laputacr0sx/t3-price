@@ -4,7 +4,12 @@ import {
   type Html5QrcodeScannerState,
   Html5QrcodeSupportedFormats,
 } from "html5-qrcode";
-import React, { type ReactElement, useEffect, useState } from "react";
+import React, {
+  type ReactElement,
+  useEffect,
+  useState,
+  useCallback,
+} from "react";
 import Layout from "~/layouts/productDetailLayout";
 import { api } from "~/utils/api";
 import { demoEANID } from "~/utils/helper";
@@ -47,9 +52,20 @@ const BarcodeScanner: NextPageWithLayout = () => {
     void obtainCameras();
   }, []);
 
+  const qrBoxCalculator = useCallback((visualViewport: VisualViewport) => {
+    const width = visualViewport.width;
+    const qrWidth = width * 0.9;
+    const qrHeight = width * 0.39;
+    return [qrWidth, qrHeight] || [50, 50];
+  }, []);
+
   useEffect(() => {
     const elementId = "scanner-region";
-    const windowWidth = window.innerWidth;
+
+    const [qrWidth, qrHeight] =
+      window && window.visualViewport
+        ? qrBoxCalculator(window.visualViewport)
+        : [50, 50];
 
     const eanScanner = new Html5Qrcode(elementId, {
       verbose: false,
@@ -57,7 +73,7 @@ const BarcodeScanner: NextPageWithLayout = () => {
       useBarCodeDetectorIfSupported: true,
     });
 
-    if (cameraInUse && !productLoaded)
+    if (cameraInUse && !productLoaded && qrWidth && qrHeight)
       try {
         void eanScanner.start(
           { deviceId: { exact: cameraInUse } },
@@ -65,8 +81,8 @@ const BarcodeScanner: NextPageWithLayout = () => {
             fps: 8,
             aspectRatio: 1,
             qrbox: {
-              width: windowWidth * 0.9,
-              height: windowWidth * 0.39,
+              width: qrWidth,
+              height: qrHeight,
             },
             disableFlip: false,
           },
@@ -134,7 +150,9 @@ const BarcodeScanner: NextPageWithLayout = () => {
       <h1 key={scannedEAN}>
         {scannedEAN && `This is my scanner ${scannedEAN}`}
       </h1>
-      <div id="scanner-region" className="w-screen resize-none" />
+      <div className="flex h-auto w-80 content-center items-center justify-center self-center md:w-[300px] lg:w-[400px]">
+        <div id="scanner-region" className="w-full resize-none" />
+      </div>
       {product && productLoaded ? <ProductPlainText product={product} /> : null}
     </div>
   );
