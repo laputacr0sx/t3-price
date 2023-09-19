@@ -8,10 +8,8 @@ import React, {
   type ReactElement,
   useEffect,
   useState,
-  useCallback,
   useRef,
   useLayoutEffect,
-  MutableRefObject,
 } from "react";
 import Layout from "~/layouts/productDetailLayout";
 import { api } from "~/utils/api";
@@ -46,36 +44,37 @@ const BarcodeScanner: NextPageWithLayout = () => {
         const labelOfCamerasAvailable = camerasAvailable.map(
           ({ label }) => label
         );
-
         const validCameras = gotCameras.filter(
           ({ label }) => !labelOfCamerasAvailable.includes(label)
         );
-
         setCamerasAvailable([...camerasAvailable, ...validCameras]);
       }
     };
 
-    void obtainCameras();
-  }, []);
+    obtainCameras().catch((e) => {
+      if (e instanceof Error) return console.error(e);
+
+      return console.log(e);
+    });
+  }, [camerasAvailable]);
 
   useLayoutEffect(() => {
     if (scannerRegionRef.current) {
-      setWidth(scannerRegionRef.current?.offsetWidth);
+      setWidth(scannerRegionRef.current.offsetWidth);
     }
   }, []);
 
   useEffect(() => {
     const elementId = "scanner-region";
-
     const eanScanner = new Html5Qrcode(elementId, {
       verbose: false,
       formatsToSupport: [Html5QrcodeSupportedFormats.EAN_13],
       useBarCodeDetectorIfSupported: true,
     });
 
-    if (cameraInUse && !productLoaded)
-      try {
-        void eanScanner.start(
+    if (cameraInUse && productLoaded === false) {
+      eanScanner
+        .start(
           { deviceId: { exact: cameraInUse } },
           {
             fps: 8,
@@ -86,13 +85,13 @@ const BarcodeScanner: NextPageWithLayout = () => {
             },
             disableFlip: false,
           },
-          (decodedText, decodedResult) => {
-            setScannerState(eanScanner.getState());
+          (decodedText) => {
             setScannedEAN(decodedText);
             setProductLoaded(true);
-            // setCameraInUse(null);
-            eanScanner.pause();
-            eanScanner.stop().catch((e) => console.error(e));
+            eanScanner.pause(!productLoaded);
+            setScannerState(eanScanner.getState());
+
+            // eanScanner.stop().catch((e) => console.error(e));
           },
           (message, error) => {
             setScannerState(eanScanner.getState());
@@ -101,15 +100,14 @@ const BarcodeScanner: NextPageWithLayout = () => {
               throw error;
             }
           }
-        );
-      } catch (error) {
-        console.error(error);
-      }
+        )
+        .catch((e) => console.error(e));
+    }
 
     return () => {
       //
     };
-  }, [cameraInUse, productLoaded]);
+  }, [cameraInUse, productLoaded, width]);
 
   if (productError) {
     return <h1>Error occurred during fetching</h1>;
@@ -121,7 +119,7 @@ const BarcodeScanner: NextPageWithLayout = () => {
         <h2 className="self-center align-middle">
           {productLoaded ? "Scan paused" : "Awaiting valid barcodes"}
         </h2>
-        <h3>{scannerState}</h3>
+        <h3 className="self-center align-middle">{scannerState}</h3>
         <button
           className="rounded-md border-2 border-solid border-slate-200 px-2 py-1 text-slate-200 disabled:border-green-800 disabled:text-green-800 "
           disabled={!productLoaded}
@@ -140,7 +138,7 @@ const BarcodeScanner: NextPageWithLayout = () => {
               <button
                 key={id + index}
                 onClick={() => void setCameraInUse(id)}
-                className="mb-1 mt-1 break-all border-2 px-1"
+                className="mb-1 mt-1 w-full break-all border-2 px-1"
               >
                 Device {index + 1} : {label}
               </button>
@@ -152,10 +150,14 @@ const BarcodeScanner: NextPageWithLayout = () => {
       </h1>
       <div
         ref={scannerRegionRef}
-        className="flex h-auto w-60 content-center items-center justify-center self-center md:w-[300px] lg:w-[400px]"
+        className="flex h-auto w-60 align-middle md:w-[300px] lg:w-[400px]"
       >
         <div id="scanner-region" className="w-full resize-none" />
       </div>
+      <div
+        id="captureZone"
+        className="flex h-auto w-24 items-center justify-center"
+      />
       {product && productLoaded ? <ProductPlainText product={product} /> : null}
     </div>
   );

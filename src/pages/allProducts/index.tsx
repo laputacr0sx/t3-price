@@ -1,4 +1,4 @@
-import { useState, type ReactElement } from "react";
+import { useState, type ReactElement, useCallback } from "react";
 import Image from "next/image";
 
 import { type NextPageWithLayout } from "~/pages/_app";
@@ -10,9 +10,6 @@ import ProductModal from "~/components/ProductModal";
 const Index: NextPageWithLayout = () => {
   const [isModalShown, setIsModalShown] = useState(false);
   const [currentItem, setCurrentItem] = useState<DemoProduct | null>(null);
-
-  // const router = useRouter();
-  // const productId = router.query.productId as string;
 
   const {
     data: allProducts,
@@ -27,12 +24,12 @@ const Index: NextPageWithLayout = () => {
     setIsModalShown(true);
   };
 
-  const getRandomImage = (images: string[]): string => {
+  const getRandomImage = useCallback((images: string[]): string => {
     const imagesLength = images.length;
     const randomImagePosition = Math.floor(Math.random() * imagesLength);
 
     return images.at(randomImagePosition)!;
-  };
+  }, []);
 
   if (allProducts?.total && !isProductLoading) {
     return (

@@ -12,12 +12,12 @@ export default function ProductPlainText({ product }: ProductPlainTextProps) {
     title,
     description,
     price,
-    discountPercentage,
-    rating,
-    stock,
+    // discountPercentage,
+    // rating,
+    // stock,
     brand,
-    category,
-    thumbnail,
+    // category,
+    // thumbnail,
     images,
   } = product;
 
