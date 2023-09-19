@@ -9,6 +9,9 @@ import React, {
   useEffect,
   useState,
   useCallback,
+  useRef,
+  useLayoutEffect,
+  MutableRefObject,
 } from "react";
 import Layout from "~/layouts/productDetailLayout";
 import { api } from "~/utils/api";
@@ -24,6 +27,9 @@ const BarcodeScanner: NextPageWithLayout = () => {
   const [cameraInUse, setCameraInUse] = useState<string | null>(null);
 
   const [scannedEAN, setScannedEAN] = useState<string | null>(null);
+
+  const [width, setWidth] = useState(0);
+  const scannerRegionRef = useRef<HTMLDivElement>(null);
 
   const { data: product, error: productError } = api.demo.getDesired.useQuery(
     {
@@ -52,20 +58,14 @@ const BarcodeScanner: NextPageWithLayout = () => {
     void obtainCameras();
   }, []);
 
-  const qrBoxCalculator = useCallback((visualViewport: VisualViewport) => {
-    const width = visualViewport.width;
-    const qrWidth = width * 0.9;
-    const qrHeight = width * 0.39;
-    return [qrWidth, qrHeight] || [50, 50];
+  useLayoutEffect(() => {
+    if (scannerRegionRef.current) {
+      setWidth(scannerRegionRef.current?.offsetWidth);
+    }
   }, []);
 
   useEffect(() => {
     const elementId = "scanner-region";
-
-    const [qrWidth, qrHeight] =
-      window && window.visualViewport
-        ? qrBoxCalculator(window.visualViewport)
-        : [50, 50];
 
     const eanScanner = new Html5Qrcode(elementId, {
       verbose: false,
@@ -73,7 +73,7 @@ const BarcodeScanner: NextPageWithLayout = () => {
       useBarCodeDetectorIfSupported: true,
     });
 
-    if (cameraInUse && !productLoaded && qrWidth && qrHeight)
+    if (cameraInUse && !productLoaded)
       try {
         void eanScanner.start(
           { deviceId: { exact: cameraInUse } },
@@ -81,8 +81,8 @@ const BarcodeScanner: NextPageWithLayout = () => {
             fps: 8,
             aspectRatio: 1,
             qrbox: {
-              width: qrWidth,
-              height: qrHeight,
+              width: width * 0.9,
+              height: width * 0.39,
             },
             disableFlip: false,
           },
@@ -150,7 +150,10 @@ const BarcodeScanner: NextPageWithLayout = () => {
       <h1 key={scannedEAN}>
         {scannedEAN && `This is my scanner ${scannedEAN}`}
       </h1>
-      <div className="flex h-auto w-80 content-center items-center justify-center self-center md:w-[300px] lg:w-[400px]">
+      <div
+        ref={scannerRegionRef}
+        className="flex h-auto w-60 content-center items-center justify-center self-center md:w-[300px] lg:w-[400px]"
+      >
         <div id="scanner-region" className="w-full resize-none" />
       </div>
       {product && productLoaded ? <ProductPlainText product={product} /> : null}
