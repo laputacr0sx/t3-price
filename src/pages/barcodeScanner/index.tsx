@@ -3,6 +3,7 @@ import {
   Html5Qrcode,
   type Html5QrcodeScannerState,
   Html5QrcodeSupportedFormats,
+  type Html5QrcodeResult,
 } from "html5-qrcode";
 import React, {
   type ReactElement,
@@ -16,6 +17,7 @@ import { api } from "~/utils/api";
 import { demoEANID } from "~/utils/helper";
 import { type NextPageWithLayout } from "../_app";
 import ProductPlainText from "~/components/ProductPlainText";
+import { type Html5QrcodeError } from "html5-qrcode/esm/core";
 
 const BarcodeScanner: NextPageWithLayout = () => {
   const [productLoaded, setProductLoaded] = useState(false);
@@ -25,9 +27,6 @@ const BarcodeScanner: NextPageWithLayout = () => {
   const [cameraInUse, setCameraInUse] = useState<string | null>(null);
 
   const [scannedEAN, setScannedEAN] = useState<string | null>(null);
-
-  const [width, setWidth] = useState(0);
-  const scannerRegionRef = useRef<HTMLDivElement>(null);
 
   const { data: product, error: productError } = api.demo.getDesired.useQuery(
     {
@@ -58,12 +57,6 @@ const BarcodeScanner: NextPageWithLayout = () => {
     });
   }, [camerasAvailable]);
 
-  useLayoutEffect(() => {
-    if (scannerRegionRef.current) {
-      setWidth(scannerRegionRef.current.offsetWidth);
-    }
-  }, []);
-
   useEffect(() => {
     const elementId = "scanner-region";
     const eanScanner = new Html5Qrcode(elementId, {
@@ -71,6 +64,30 @@ const BarcodeScanner: NextPageWithLayout = () => {
       formatsToSupport: [Html5QrcodeSupportedFormats.EAN_13],
       useBarCodeDetectorIfSupported: true,
     });
+
+    const onSuccessCallback = (
+      decodedText: string,
+      decodedResult: Html5QrcodeResult
+    ) => {
+      setScannedEAN(decodedText);
+      setProductLoaded(true);
+      setScannerState(eanScanner.getState());
+
+      eanScanner.pause();
+      eanScanner.clear();
+      eanScanner.stop().catch((e) => console.error(e));
+    };
+
+    const onDecodeErrorCallback = (
+      message: string,
+      error: Html5QrcodeError
+    ) => {
+      setScannerState(eanScanner.getState());
+      if (error instanceof Error) {
+        console.error(message);
+        throw error;
+      }
+    };
 
     if (cameraInUse && productLoaded === false) {
       eanScanner
@@ -80,27 +97,13 @@ const BarcodeScanner: NextPageWithLayout = () => {
             fps: 8,
             aspectRatio: 1,
             qrbox: {
-              width: width * 0.9,
-              height: width * 0.39,
+              width: 320 * 0.9,
+              height: 320 * 0.62,
             },
             disableFlip: false,
           },
-          (decodedText) => {
-            setScannedEAN(decodedText);
-            setProductLoaded(true);
-            setScannerState(eanScanner.getState());
-
-            eanScanner.pause();
-            eanScanner.clear();
-            eanScanner.stop().catch((e) => console.error(e));
-          },
-          (message, error) => {
-            setScannerState(eanScanner.getState());
-            if (error instanceof Error) {
-              console.error(message);
-              throw error;
-            }
-          }
+          onSuccessCallback,
+          onDecodeErrorCallback
         )
         .catch((e) => console.error(e));
     }
@@ -108,7 +111,7 @@ const BarcodeScanner: NextPageWithLayout = () => {
     return () => {
       //
     };
-  }, [cameraInUse, productLoaded, width]);
+  }, [cameraInUse, productLoaded]);
 
   if (productError) {
     return <h1>Error occurred during fetching</h1>;
@@ -150,14 +153,27 @@ const BarcodeScanner: NextPageWithLayout = () => {
         {scannedEAN &&
           `Barcode scanned ${scannedEAN.slice(0, 3)} ${scannedEAN.slice(3)}`}
       </h1>
-      <div
-        ref={scannerRegionRef}
-        className="flex h-auto w-60 align-middle md:w-[300px] lg:w-[400px]"
-      >
+      <div className="flex h-auto w-60 align-middle md:w-[300px] lg:w-[400px]">
         <div id="scanner-region" className="w-full resize-none" />
       </div>
 
-      {product && scannedEAN ? <ProductPlainText product={product} /> : null}
+      {product && (
+        <ProductPlainText
+          product={{
+            id: 98719287391,
+            title: "string",
+            description: "string",
+            price: 999,
+            discountPercentage: 10,
+            rating: 4.3,
+            stock: 9999,
+            brand: "string",
+            category: "string",
+            thumbnail: "string",
+            images: ["123"],
+          }}
+        />
+      )}
     </div>
   );
 };
