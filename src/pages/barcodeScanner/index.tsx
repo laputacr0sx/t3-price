@@ -88,10 +88,11 @@ const BarcodeScanner: NextPageWithLayout = () => {
           (decodedText) => {
             setScannedEAN(decodedText);
             setProductLoaded(true);
-            eanScanner.pause(!productLoaded);
             setScannerState(eanScanner.getState());
 
-            // eanScanner.stop().catch((e) => console.error(e));
+            eanScanner.pause();
+            eanScanner.clear();
+            eanScanner.stop().catch((e) => console.error(e));
           },
           (message, error) => {
             setScannerState(eanScanner.getState());
@@ -146,7 +147,8 @@ const BarcodeScanner: NextPageWithLayout = () => {
           : null}
       </div>
       <h1 key={scannedEAN}>
-        {scannedEAN && `This is my scanner ${scannedEAN}`}
+        {scannedEAN &&
+          `Barcode scanned ${scannedEAN.slice(0, 3)} ${scannedEAN.slice(3)}`}
       </h1>
       <div
         ref={scannerRegionRef}
@@ -154,11 +156,8 @@ const BarcodeScanner: NextPageWithLayout = () => {
       >
         <div id="scanner-region" className="w-full resize-none" />
       </div>
-      <div
-        id="captureZone"
-        className="flex h-auto w-24 items-center justify-center"
-      />
-      {product && productLoaded ? <ProductPlainText product={product} /> : null}
+
+      {product && scannedEAN ? <ProductPlainText product={product} /> : null}
     </div>
   );
 };

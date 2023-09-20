@@ -7,6 +7,8 @@ type ProductPlainTextProps = {
 };
 
 export default function ProductPlainText({ product }: ProductPlainTextProps) {
+  console.log("product sent");
+
   const {
     id,
     title,
